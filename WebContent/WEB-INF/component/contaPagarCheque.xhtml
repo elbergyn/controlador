@@ -1,0 +1,47 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+	<p:panelGrid columns="2" columnClasses="rotulo, campo" >
+		<p:outputLabel for="pc_cheque" value="Cheque" />
+		<p:selectOneMenu id="pc_cheque" required="true"
+			requiredMessage="Informe o cheque"
+			value="#{cadastroContaPagarBean.emitirCheque.cheque}"
+			styleClass="ui-selectonemenu-normal">
+			<f:selectItem itemLabel="Selecione o cheque" />
+			<f:selectItems value="#{cadastroContaPagarBean.cheques}" var="item"
+				itemLabel="#{item.descricao}" itemValue="#{item}" />
+		</p:selectOneMenu>
+
+		<p:outputLabel value="Número" for="pc_numero" id="lb_numero" />
+		<h:column id="add_cheque">
+			<p:inputText id="pc_numero" required="#{cadastroContaPagarBean.requererNumeroCheque()}"
+				requiredMessage="Informe o número do cheque"
+				value="#{cadastroContaPagarBean.emitirCheque.numeroCheque}"
+				onkeyup="validarNumero(this);" size="14"
+				maxlength="8"
+				validator="maiorZeroValidation"/>
+
+			<p:commandButton icon="icon-button-add" partialSubmit="true"
+				process="pc_cheque, pc_numero, @this" update="numeros_cheque, pc_numero, lb_numero"
+				action="#{cadastroContaPagarBean.adicionarNumeroCheque()}"
+				title="Adicionar número de cheque" />
+		</h:column>
+	
+		<p:outputLabel value="Números adicionados" />
+		<p:dataList value="#{cadastroContaPagarBean.emitirCheque.numeros}"
+			styleClass="datalist-sem-borda data_list_sem_fundo" var="numero" type="ordered"
+			id="numeros_cheque" emptyMessage="" >
+			<p:outputLabel value="#{numero}" />
+
+			<p:commandLink
+				actionListener="#{cadastroContaPagarBean.removerNumeroCheque(numero)}"
+				partialSubmit="true" process="@this" update="numeros_cheque"
+				title="Remover número de cheque">
+				<p:graphicImage name="remove.png" library="images/16" />
+			</p:commandLink>
+		</p:dataList>
+	</p:panelGrid>
+</ui:composition>

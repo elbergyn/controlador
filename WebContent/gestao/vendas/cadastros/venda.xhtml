@@ -1,0 +1,155 @@
+<ui:composition template="/WEB-INF/template/LayoutPadrao.html"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+	<ui:define name="title">Venda</ui:define>
+
+	<ui:param name="bean" value="#{cadastroVendaBean}" />
+
+	<ui:define name="corpo">
+		<p:panel header="Venda" id="panelCadastro">
+			<p:panelGrid columns="2" id="layout" layout="grid">
+				<p:column style="width: 50%">					
+					<p:panel header="Adicionar item ao pedido" styleClass="remover_borda_padding">
+						<p:fragment autoUpdate="true">
+							<p:panelGrid columns="2" layout="grid" columnClasses="rotulo, campo, rotulo, campo" 
+								id="itens" styleClass="ui-fluid">
+								<p:outputLabel value="Produto: " for="prod" />
+								<p:column>
+									<p:autoComplete id="prod" effect="fade" scrollHeight="200"
+										value="#{cadastroVendaBean.item.produto}" dropdown="true"
+										completeMethod="#{cadastroVendaBean.produtos}" var="item"
+										itemLabel="#{item.descricao}" itemValue="#{item}" size="30"
+										minQueryLength="3">
+										<p:ajax event="itemSelect" process="@this" update="barras" partialSubmit="true"/>	
+									</p:autoComplete>
+									<!-- <p:commandButton type="button" style="left: 5px;" 
+										action="#{cadastroVendaBean.abrirPesquisa()}" 
+										process="@this" partialSubmit="true" icon="icon-search"/> -->
+								</p:column>
+								
+								<p:outputLabel value="Cód. barras" for="barras" />
+								<p:inputText id="barras" size="48" maxlength="48" onkeyup="validarNumero(this)"
+									value="#{cadastroVendaBean.codBarras}" styleClass="input_destaque"/>
+			
+								<p:outputLabel value="Qtde.: " for="qtde" />
+								<p:column>
+									<p:spinner id="qtde"
+										value="#{cadastroVendaBean.item.qtde}" min="1"
+										onkeyup="validarNumero(this);" />
+									<p:commandButton icon="icon-button-add" style="left: 5px;"
+										title="Adicionar produto" partialSubmit="true" process="itens"
+										actionListener="#{cadastroVendaBean.addItem()}"
+										update="tableItens itens totais">
+										<p:focus for="barras" />
+									</p:commandButton>
+								</p:column>
+							</p:panelGrid>
+						</p:fragment>
+					</p:panel>
+					
+					<p:panel style="font-size: 14px !important, padding-right: 10px">
+						<p:commandButton icon="icon-money" value="Pagamento" id="pagamento"
+							process="@this" update="dlgPagamento" actionListener="#{cadastroVendaBean.salvar()}"
+							title="Realizar pagamento" oncomplete="PF('dlgPagamento').show()">
+							<f:setPropertyActionListener target="#{pagamentoOrcamentoBean.venda}" 
+								value="#{cadastroVendaBean.venda}" />
+						</p:commandButton>
+						<p:commandButton value="Novo" id="novo" icon="icon-new"
+							action="#{cadastroVendaBean.novo()}" immediate="true" process="@this"
+							partialSubmit="true" update="panelCadastro tableItens totais" />
+					</p:panel>
+				</p:column>
+				<p:column>				
+					<p:dataTable id="tableItens" var="item"
+						value="#{cadastroVendaBean.venda.orcamento.itensVenda}"
+						style="margin-top: 5px; width: 99%; "
+						emptyMessage="Nenhum item adicionado"
+						paginatorAlwaysVisible="false" rowKey="#{item.id}" scrollable="true"
+						scrollHeight="240" resizableColumns="true">
+		
+						<f:facet name="header">
+							Itens da venda
+						</f:facet>
+		
+						<p:column headerText="Cód." style="width: 60px">
+							<h:outputLabel value="#{item.produto.id}" />
+						</p:column>
+		
+						<p:column headerText="Produto">
+							<h:outputLabel value="#{item.produto.descricao}" />
+						</p:column>
+		
+						<p:column headerText="Valor Unit." style="width: 100px">
+							<h:outputLabel value="#{item.valorUnitario}">
+								<f:convertNumber type="currency" />
+							</h:outputLabel>
+						</p:column>
+		
+						<p:column headerText="Qtde" style="width: 30px">
+							<h:outputLabel value="#{item.qtde}" />
+						</p:column>
+		
+						<p:column headerText="Valor Total" style="width: 100px">
+							<h:outputLabel value="#{item.valorTotal}">
+								<f:convertNumber type="currency" />
+							</h:outputLabel>
+						</p:column>
+		
+						<p:column style="width: 32px">
+							<p:commandButton icon="icon-button-remove" title="Subtrair item"
+								process="@this" partialSubmit="true"
+								oncomplete="PF('subtrairItem').show()">
+								<f:setPropertyActionListener target="#{bean.item}"
+									value="#{item}" />
+							</p:commandButton>
+						</p:column>
+					</p:dataTable>
+		
+					<p:confirmDialog header="Subtrair item"
+						message="Tem certeza que deseja subtrair o item?"
+						widgetVar="subtrairItem">
+						<p:commandButton value="Sim" action="#{bean.removeItem()}"
+							partialSubmit="true" process="@this"
+							oncomplete="PF('subtrairItem').hide();" icon="icon-button-ok"
+							update="tableItens totais" />
+						<p:button value="Não"
+							onclick="PF('subtrairItem').hide(); return false;"
+							icon="icon-button-no" />
+					</p:confirmDialog>
+				</p:column>				
+			</p:panelGrid>
+			<p:panelGrid columns="2" id="totais" layout="grid" styleClass="totaisOrcamento">
+				<p:column>
+					<p:outputLabel value="Valor Pedido: " for="tPedidos" />
+					<p:inputText id="tPedidos" readonly="true"
+						value="#{cadastroVendaBean.venda.orcamento.valorItens}">
+						<f:convertNumber type="currency" />
+					</p:inputText>
+				</p:column>
+	
+				<p:column>
+					<p:outputLabel value="Valor Total: " for="vTotal" />
+					<p:inputText id="vTotal" readonly="true" 
+						value="#{cadastroVendaBean.venda.orcamento.valorTotal}">
+						<f:convertNumber type="currency" />
+					</p:inputText>
+				</p:column>
+			</p:panelGrid>
+		</p:panel>
+		
+		<p:dialog id="dlgPagamento" widgetVar="dlgPagamento" appendTo="body"
+			width="60%" height="50%" responsive="true"
+			modal="true" header="Pagamento">
+			<ui:include src="/gestao/dialogFramework/pagamentoVendaDialog.xhtml"/>
+		</p:dialog>
+		
+		<p:focus for="barras" />
+		<p:hotkey bind="i" handler="$('#barras').focus()" />
+		<p:hotkey bind="n" handler="$('#novo').click()" />
+		<p:hotkey bind="p" handler="$('#pagamento').click()" />
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,458 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition template="/WEB-INF/template/LayoutPadrao.html"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+	<ui:define name="titulo">Manuteção Parto</ui:define>
+
+	<ui:define name="corpo">
+
+		<f:metadata>
+			<f:viewParam name="dummy" />
+			<f:event listener="#{fichaPartoBean.inicializarBean}"
+				type="preRenderView" />
+		</f:metadata>
+
+		<h1>Manuteção - Parto</h1>
+
+		<h:form id="form-menu">
+			<p:toolbar styleClass="semPreenchimento">
+				<p:toolbarGroup>
+					<p:commandButton icon="novo-icon" value="Novo"
+						oncomplete="PF('dialogCadastro').show()" process="@this"
+						update="form-cadastro" action="#{fichaPartoBean.novoCadastro}">
+						<p:resetInput target="form-cadastro" />
+					</p:commandButton>
+					<p:commandButton icon="editar-icon" value="Editar"
+						style="margin-left: 5px; margin-right: 5px;"
+						oncomplete="PF('dialogCadastro').show()" process="@this"
+						update="form-cadastro" action="#{fichaPartoBean.editar}"
+						disabled="#{fichaPartoBean.partoSelecionado == null}">
+						<p:resetInput target="form-cadastro" />
+					</p:commandButton>
+					<p:commandButton icon="excluir-icon" value="Excluir"
+						oncomplete="PF('confirmacaoExclusao').show()" process="@this"
+						update=":form-Exclusao" action="#{fichaPartoBean.editar}"
+						disabled="#{fichaPartoBean.partoSelecionado == null}">
+					</p:commandButton>
+					<ui:remove>
+						<p:separator />
+						<p:commandButton icon="fa fa-filter" title="Filtrar Registro"
+							style="margin-left:5px;" oncomplete="PF('dialogFiltro').show()" />
+					</ui:remove>
+				</p:toolbarGroup>
+				<p:toolbarGroup align="right">
+					<p:button value="Fechar" icon="fa fa-power-off"
+						outcome="/home.xhtml" />
+				</p:toolbarGroup>
+			</p:toolbar>
+		</h:form>
+
+		<h:form id="form-table">
+
+			<p:dataTable id="tbl-parto" value="#{fichaPartoBean.partos}"
+				var="parto" style="margin-top: 5px"
+				styleClass="table-tela-manutecao"
+				emptyMessage="Nenhuma registro encontrada." rows="10"
+				paginator="true" paginatorAlwaysVisible="false"
+				paginatorPosition="bottom" selectionMode="single"
+				selection="#{fichaPartoBean.partoSelecionado}" rowKey="#{parto.id}">
+
+				<p:ajax event="rowSelect" update="form-menu, form-table" />
+				<p:ajax event="rowUnselect" update="form-menu, form-table" />
+
+				<p:column headerText="Brinco"
+					style="width: 80px; text-align: center;"
+					sortBy="#{parto.animal.brinco}">
+					<h:outputText value="#{parto.animal.brinco}" />
+				</p:column>
+
+				<p:column headerText="Animal" style="width: 200px"
+					sortBy="#{parto.animal.nome}">
+					<h:outputText value="#{parto.animal.nome}" />
+				</p:column>
+
+				<p:column headerText="Data Parto"
+					style="width: 100px; text-align: center;" sortBy="#{parto.dtParto}">
+					<h:outputText value="#{parto.dtParto}">
+						<f:convertDateTime pattern="dd/MM/yyyy" />
+					</h:outputText>
+				</p:column>
+
+				<p:column headerText="Tipo do Parto" style="width: 200px">
+					<h:outputText value="#{parto.tipoParto.nome}" />
+				</p:column>
+
+				<p:column headerText="Condição Corporal" style="width: 180px">
+					<h:outputText value="#{parto.condicaoCorporal.nome}" />
+				</p:column>
+
+				<p:column headerText="Qtd Cria(s)" style="width: 120px">
+					<h:outputText value="#{parto.quantidade}" />
+				</p:column>
+
+			</p:dataTable>
+
+		</h:form>
+
+		<p:dialog header="Lançamento de Parto" widgetVar="dialogCadastro"
+			styleClass="espacamento_dialog" modal="true" resizable="false"
+			draggable="true" id="dgCadastro" closeOnEscape="true" width="585"
+			height="335" appendTo="@(body)">
+
+			<h:form id="form-cadastro">
+
+				<p:tabView styleClass="espacamento-tabview" id="tabView1">
+					<p:tab title="Identificação do Animal">
+						<p:panelGrid columns="1" styleClass="semBorda">
+							<p:outputLabel for="nome" value="Brinco/Nome" />
+							<p:selectOneMenu autoWidth="false" filter="true"
+								filterMatchMode="contains" style="width: 515px;" required="true"
+								id="nome" requiredMessage="Selecione um animal"
+								disabled="#{fichaPartoBean.edicao==true}"
+								value="#{fichaPartoBean.parto.id}"
+								converter="omnifaces.SelectItemsConverter">
+								<f:selectItem itemLabel="Selecione um animal"
+									itemValue="#{null}" />
+								<f:selectItems value="#{fichaPartoBean.animals}" var="animal"
+									itemLabel="#{animal.animal.brinco} - #{animal.animal.nome}"
+									itemValue="#{animal.id}" />
+								<p:ajax event="change" process="@this"
+									update=":form-cadastro:tabView2"
+									listener="#{fichaPartoBean.teste}" />
+							</p:selectOneMenu>
+						</p:panelGrid>
+					</p:tab>
+				</p:tabView>
+
+				<p:tabView style="height: 180px;" styleClass="espacamento-tabview"
+					id="tabView2">
+					<p:tab title="Dados do Parto">
+						<p:panelGrid styleClass="semBorda">
+							<!-- 1ª LINHA -->
+							<p:row>
+								<p:column>
+									<p:outputLabel for="dtParto" value="Data Parto" />
+								</p:column>
+								<p:column>
+									<p:outputLabel for="tipoParto" value="Tipo Parto" />
+								</p:column>
+								<p:column>
+									<p:outputLabel for="condCorporal" value="Cond. Corporal" />
+								</p:column>
+								<p:column>
+									<p:outputLabel for="qtd" value="Qtde Cria(s)" />
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column>
+									<p:calendar id="dtParto" size="8" pattern="dd/MM/yyyy"
+										locale="pt_BR" required="true"
+										disabled="#{fichaPartoBean.edicao==true}"
+										value="#{fichaPartoBean.parto.dtParto}"
+										requiredMessage="Informe a data parto" />
+								</p:column>
+								<p:column>
+									<p:selectOneMenu id="tipoParto" autoWidth="false"
+										style="width: 120px;" required="true"
+										disabled="#{fichaPartoBean.edicao==true}"
+										converter="omnifaces.SelectItemsConverter"
+										value="#{fichaPartoBean.parto.tipoParto}"
+										requiredMessage="Selecione um tipo parto">
+										<f:selectItem itemLabel="Selecione..." itemValue="#{null}" />
+										<f:selectItems value="#{fichaPartoBean.tipoPartos}"
+											var="tipoParto" itemLabel="#{tipoParto.nome}"
+											itemValue="#{tipoParto}" />
+										<p:ajax event="change" process="@this"
+											listener="#{fichaPartoBean.qtdes}"
+											update=":form-cadastro:tabView2:qtd " />
+									</p:selectOneMenu>
+								</p:column>
+								<p:column>
+									<p:selectOneMenu autoWidth="false" style="width: 170px;"
+										required="true" id="condCorporal"
+										disabled="#{fichaPartoBean.edicao==true}"
+										converter="omnifaces.SelectItemsConverter"
+										requiredMessage="Selecione um condição corporal"
+										value="#{fichaPartoBean.parto.condicaoCorporal}">
+										<f:selectItem itemLabel="Selecione..." itemValue="#{null}" />
+										<f:selectItems value="#{fichaPartoBean.condicoesCorporal}"
+											var="o" itemLabel="#{o.nome}" itemValue="#{o}" />
+									</p:selectOneMenu>
+								</p:column>
+								<p:column>
+									<p:spinner id="qtd" size="5" min="0" max="2" required="true"
+										value="#{fichaPartoBean.parto.quantidade}"
+										disabled="#{fichaPartoBean.parto.tipoParto.nome == 'ABORTO'}"
+										requiredMessage="Informe a quantidade de cria">
+										<p:ajax event="change" process="@this"
+											update=":form-cadastro:tabView2:nomeCria1" />
+									</p:spinner>
+								</p:column>
+							</p:row>
+							<!-- 2ª LINHA -->
+							<p:row>
+								<p:column colspan="4">
+									<p:outputLabel value="Observação" />
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column colspan="4">
+									<p:inputTextarea rows="3" style="width: 98%;"
+										value="#{fichaPartoBean.parto.obsParto}" />
+								</p:column>
+							</p:row>
+						</p:panelGrid>
+					</p:tab>
+					<p:tab title="Cria 1" id="tabCria">
+						<p:panelGrid styleClass="semBorda">
+							<!-- 1ª LINHA -->
+							<p:row>
+								<p:column>
+									<p:outputLabel for="nomeCria1" value="Nome" />
+								</p:column>
+								<p:column>
+									<p:outputLabel for="brinco1" value="Brinco" />
+								</p:column>
+								<p:column>
+									<p:outputLabel for="genero1" value="Genero" />
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column>
+									<p:inputText id="nomeCria1" size="38" required="true"
+										requiredMessage="Informe o nome da cria 1"
+										disabled="#{fichaPartoBean.parto.quantidade==0}"
+										value="#{fichaPartoBean.parto.nomeCria1}" />
+								</p:column>
+								<p:column>
+									<p:inputText id="brinco1" size="11" required="true"
+										requiredMessage="Informe o brinco da cria 1"
+										disabled="#{fichaPartoBean.parto.quantidade==0}"
+										value="#{fichaPartoBean.parto.brincoCria1}" />
+								</p:column>
+								<p:column>
+									<p:selectOneMenu id="genero1" autoWidth="false"
+										style="width: 85px;" required="true"
+										requiredMessage="Selecione o genero da cria 1"
+										disabled="#{fichaPartoBean.parto.quantidade==0}"
+										value="#{fichaPartoBean.parto.generoCria1}">
+										<f:selectItem itemLabel="Selecione..." value="#{null}" />
+										<f:selectItems value="#{fichaPartoBean.generos}" var="obj"
+											itemLabel="#{obj.descricao}" itemValue="#{obj}" />
+									</p:selectOneMenu>
+								</p:column>
+							</p:row>
+
+						</p:panelGrid>
+						<p:panelGrid styleClass="semBorda">
+							<!-- 1ª LINHA -->
+							<p:row>
+								<p:column>
+									<p:outputLabel for="raca1" value="Raça" />
+								</p:column>
+								<p:column>
+									<p:outputLabel for="categoria1" value="Categoria" />
+								</p:column>
+								<p:column>
+									<p:outputLabel for="peso1" value="Peso (kg)" />
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column>
+									<p:selectOneMenu autoWidth="false" style="width: 180px;"
+										id="raca1" required="true"
+										requiredMessage="Selecione a raça da cria 1"
+										disabled="#{fichaPartoBean.parto.quantidade==0}"
+										value="#{fichaPartoBean.parto.raca1}"
+										converter="omnifaces.SelectItemsConverter">
+										<f:selectItem itemLabel="Selecione..." itemValue="#{null}" />
+										<f:selectItems value="#{fichaPartoBean.racas}" var="raca"
+											itemLabel="#{raca.nome}" itemValue="#{raca}" />
+									</p:selectOneMenu>
+								</p:column>
+								<p:column>
+									<p:selectOneMenu autoWidth="false" style="width: 180px;"
+										required="true" id="categoria1"
+										requiredMessage="Selecione a categoria da cria 1"
+										disabled="#{fichaPartoBean.parto.quantidade==0}"
+										converter="omnifaces.SelectItemsConverter"
+										value="#{fichaPartoBean.parto.categoria1}">
+										<f:selectItem itemLabel="Selecione..." itemValue="#{null}" />
+										<f:selectItems value="#{fichaPartoBean.categorias}" var="c"
+											itemLabel="#{c.nome}" itemValue="#{c}" />
+									</p:selectOneMenu>
+								</p:column>
+								<p:column>
+									<p:inputText id="peso1" size="11" required="true"
+										requiredMessage="Informe o peso da cria 1"
+										disabled="#{fichaPartoBean.parto.quantidade==0}"
+										value="#{fichaPartoBean.parto.peso1}" />
+								</p:column>
+							</p:row>
+
+						</p:panelGrid>
+					</p:tab>
+					<p:tab title="Cria 2">
+						<p:panelGrid styleClass="semBorda">
+							<!-- 1ª LINHA -->
+							<p:row>
+								<p:column>
+									<p:outputLabel for="nomeCria2" value="Nome" />
+								</p:column>
+								<p:column>
+									<p:outputLabel for="brinco2" value="Brinco" />
+								</p:column>
+								<p:column>
+									<p:outputLabel for="genero2" value="Genero" />
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column>
+									<p:inputText id="nomeCria2" size="38" required="true"
+										requiredMessage="Informe o nome da cria 2"
+										disabled="#{fichaPartoBean.parto.quantidade!=2}"
+										value="#{fichaPartoBean.parto.nomeCria2}" />
+								</p:column>
+								<p:column>
+									<p:inputText id="brinco2" size="11" required="true"
+										requiredMessage="Informe o brinco da cria 2"
+										disabled="#{fichaPartoBean.parto.quantidade!=2}"
+										value="#{fichaPartoBean.parto.brincoCria2}" />
+								</p:column>
+								<p:column>
+									<p:selectOneMenu id="genero2" autoWidth="false" required="true"
+										requiredMessage="Selecione o genero da cria 2"
+										disabled="#{fichaPartoBean.parto.quantidade!=2}"
+										value="#{fichaPartoBean.parto.generoCria2}"
+										style="width: 85px;">
+										<f:selectItem itemLabel="Selecione..." value="#{null}" />
+										<f:selectItems value="#{fichaPartoBean.generos}" var="obj"
+											itemLabel="#{obj.descricao}" itemValue="#{obj}" />
+									</p:selectOneMenu>
+								</p:column>
+							</p:row>
+
+						</p:panelGrid>
+						<p:panelGrid styleClass="semBorda">
+							<!-- 1ª LINHA -->
+							<p:row>
+								<p:column>
+									<p:outputLabel for="raca2" value="Raça" />
+								</p:column>
+								<p:column>
+									<p:outputLabel for="categoria2" value="Categoria" />
+								</p:column>
+								<p:column>
+									<p:outputLabel for="peso2" value="Peso (kg)" />
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column>
+									<p:selectOneMenu autoWidth="false" style="width: 180px;"
+										id="raca2" required="true"
+										requiredMessage="Selecione a raça da cria 2"
+										disabled="#{fichaPartoBean.parto.quantidade!=2}"
+										value="#{fichaPartoBean.parto.raca2}"
+										converter="omnifaces.SelectItemsConverter">
+										<f:selectItem itemLabel="Selecione..." itemValue="#{null}" />
+										<f:selectItems value="#{fichaPartoBean.racas}" var="raca"
+											itemLabel="#{raca.nome}" itemValue="#{raca}" />
+									</p:selectOneMenu>
+								</p:column>
+								<p:column>
+									<p:selectOneMenu autoWidth="false" style="width: 180px;"
+										id="categoria2" required="true"
+										requiredMessage="Selecione a categoria da cria 2"
+										disabled="#{fichaPartoBean.parto.quantidade!=2}"
+										converter="omnifaces.SelectItemsConverter"
+										value="#{fichaPartoBean.parto.categoria2}">
+										<f:selectItem itemLabel="Selecione..." itemValue="#{null}" />
+										<f:selectItems value="#{fichaPartoBean.categorias}" var="c"
+											itemLabel="#{c.nome}" itemValue="#{c}" />
+									</p:selectOneMenu>
+								</p:column>
+								<p:column>
+									<p:inputText id="peso2" size="11" required="true"
+										requiredMessage="Informe o peso da cria 2"
+										disabled="#{fichaPartoBean.parto.quantidade!=2}"
+										value="#{fichaPartoBean.parto.peso2}" />
+								</p:column>
+							</p:row>
+
+						</p:panelGrid>
+					</p:tab>
+				</p:tabView>
+
+
+				<p:toolbar style="margin-top: 10px" styleClass="semPreenchimento">
+					<p:toolbarGroup style="margin-left: 15px;">
+						<p:commandButton value="Informação" title="Cadastramento de Crias"
+							oncomplete="PF('cadastroCria').show()" process="@this">
+							<p:resetInput target="form-cadastro-cria" />
+						</p:commandButton>
+					</p:toolbarGroup>
+					<p:toolbarGroup align="right" style="margin-right: 10px;">
+						<p:commandButton value="Cancelar" icon="cancelar-icon"
+							style="margin-right: 3px;"
+							oncomplete="PF('dialogCadastro').hide()" immediate="true" />
+						<p:commandButton value="Salvar" icon="salvar-icon"
+							update=":form-cadastro:tabView1 :form-cadastro:tabView2 :form-table :form-menu"
+							action="#{fichaPartoBean.salvar}" id="salvarCommandButton"
+							oncomplete="if(args.sucesso == true) PF('dialogCadastro').hide()" />
+					</p:toolbarGroup>
+				</p:toolbar>
+				<p:defaultCommand target="salvarCommandButton" />
+
+
+			</h:form>
+
+		</p:dialog>
+
+		<p:dialog header="Exclusão Animal" widgetVar="confirmacaoExclusao"
+			modal="true" resizable="false" draggable="true" closeOnEscape="true"
+			width="400" appendTo="@(body)">
+			<h:form id="form-Exclusao">
+				<p:panelGrid columns="1" styleClass="semBorda">
+					<p:outputLabel value="Tem certeza que deseja excluir a Animal:" />
+					<p:outputLabel
+						value="#{fichaPartoBean.parto.animal.brinco} - #{fichaPartoBean.parto.animal.nome} ?" />
+				</p:panelGrid>
+				<p:panelGrid styleClass="semBorda">
+					<p:button value="Não" style="margin-right:8px; margin-top: 15px"
+						onclick="PF('confirmacaoExclusao').hide(); return false;" />
+					<p:commandButton value="Sim" action="#{fichaPartoBean.excluir}"
+						update="form-table, form-menu"
+						oncomplete="if(!args.validationFailed) PF('confirmacaoExclusao').hide()" />
+				</p:panelGrid>
+			</h:form>
+		</p:dialog>
+
+		<p:dialog header="Informação" widgetVar="cadastroCria" modal="true"
+			resizable="false" draggable="true" closeOnEscape="true" width="400"
+			height="220" appendTo="@(body)">
+			<h:form id="form-cadastro-cria">
+				<p:panelGrid styleClass="semBorda">
+					<p:inputTextarea rows="10" cols="49" disabled="true"
+						value="Os animais disponibilizados para o parto são os que se encontram com o registro de parto cadastrado e o resultado do diagnóstico seja Positivo.
+							   Depois de cadastrado o registro de Parto só é permitido alteração dos campos de Observação e Dados da Cria. Caso algum outro tipo de informação esteja 
+							   incorreto, será necessário excluir o registro e incluí-lo novamente
+					" />
+				</p:panelGrid>
+				<p:panelGrid styleClass="semBorda">
+					<p:button value="Não" style="margin-right:8px; margin-top: 15px"
+						onclick="PF('cadastroCria').hide(); return false;" />
+					<p:commandButton value="Sim"
+						oncomplete="if(!args.validationFailed) PF('cadastroCria').hide()" />
+				</p:panelGrid>
+			</h:form>
+		</p:dialog>
+
+
+	</ui:define>
+
+</ui:composition>

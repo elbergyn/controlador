@@ -1,0 +1,27 @@
+<ui:composition template="/WEB-INF/template/LayoutPadrao.html"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+	<ui:define name="title">Cadastro de orçamentos</ui:define>
+
+	<ui:param name="bean" value="#{cadastroOrcamentoBean}" />
+	
+	<ui:define name="corpo">
+		<p:panel header="Cadastro de orçamentos" id="panelCadastro" >
+			<p:tabView prependId="false" effect="fade" effectDuration="fast" id="tabView" >
+				
+				<p:ajax event="tabChange" update="tabOrcamento"/>
+				
+				<p:tab title="Dados orçamento" id="tabCadastro" >
+					<ui:include src="/WEB-INF/component/vendas/cadastroOrcamento.xhtml" />
+				</p:tab>
+				<p:tab id="tab2" title="Orçamentos abertos" >
+					<ui:include src="/WEB-INF/component/orcamentosAbertos.xhtml" />
+				</p:tab>
+			</p:tabView>
+		</p:panel>
+	</ui:define>
+</ui:composition>

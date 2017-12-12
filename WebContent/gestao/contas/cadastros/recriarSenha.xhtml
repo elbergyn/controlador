@@ -1,0 +1,38 @@
+<ui:composition template="/WEB-INF/template/LayoutSegundario.html"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+	<ui:define name="title">Recriar senha</ui:define>
+	
+	<ui:define name="corpo">
+		<p:panel header="Alterar senha de usuario '#{recriarSenhaBean.usuario.descricao}'" id="panelCadastro">
+			
+			<div style="padding-bottom: 10px;">
+				<p:commandButton value="Salvar" icon="icon-save" action="#{recriarSenhaBean.salvar()}" update="table panelCadastro messageSimple"/>
+				<p:button value="Cancelar" icon="icon-cancel" outcome="pretty:login" />
+			</div>
+			
+			<p:panelGrid columns="2" columnClasses="rotuloMaior, campo" layout="grid">
+				<p:outputLabel for="senha" value="Nova senha" />
+				<p:password id="senha" match="confirmacao"
+					required="true"
+					requiredMessage="Informe a nova senha"
+					value="#{recriarSenhaBean.novaSenha}"
+					weakLabel="Senha fraca"
+					goodLabel="Senha média"
+					strongLabel="Senha forte"
+					promptLabel="Informe a senha"
+					feedback="true"
+					maxlength="20"
+					validator="validarCampoBranco"/>
+					
+				<p:outputLabel for="confirmacao" value="Confirme a senha" />
+				<p:password id="confirmacao" required="true" requiredMessage="Confirme a senha"/>
+			</p:panelGrid>
+			<p:panel id="table" style="visibility: hidden" />
+		</p:panel>
+	</ui:define>
+</ui:composition>

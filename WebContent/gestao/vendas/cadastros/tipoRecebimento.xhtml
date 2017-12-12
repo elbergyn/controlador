@@ -1,0 +1,58 @@
+<ui:composition template="/WEB-INF/template/LayoutPadrao.html"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+	<ui:define name="title">Cadastro de tipos recebimento</ui:define>
+
+	<ui:param name="bean" value="#{cadastroTipoRecebimentoBean}" />
+	
+	<ui:define name="corpo">
+		<p:panel header="Cadastro de tipos de recebimento" id="panelCadastro">
+			
+			<ui:include src="/WEB-INF/template/botoesCadastro.xhtml"/>
+			
+			<p:panelGrid columns="2" columnClasses="rotulo, campo" layout="grid" styleClass="gridSimples">
+				<p:outputLabel value="Descrição" for="descricao" />
+				<p:inputText id="descricao" size="25" maxlength="30" value="#{cadastroTipoRecebimentoBean.tipoRecebimento.descricao}" 
+					required="true" requiredMessage="Informe a descrição do tipo recebimento" 
+					styleClass="captalize"/>
+			</p:panelGrid>
+		</p:panel>
+
+		<p:panel styleClass="sem-fundo">
+			<p:dataTable id="table" value="#{bean.listarTipoRecebimentos()}" var="item"
+				style="margin-top: 5px; width: 99,5%" emptyMessage="Nenhum Tipo de recebimento cadastrado" rows="10" paginator="true"
+				rowsPerPageTemplate="10 20 30" paginatorAlwaysVisible="false" paginatorPosition="top" >
+							
+				<f:facet name="header">
+					Tipos de recebimentos cadastrados
+				</f:facet>
+						
+				<p:column headerText="Descrição" sortBy="#{item.descricao}">
+					<h:outputText value="#{item.descricao}" />
+				</p:column>
+				<p:column style="text-align: center; width: 90px;">
+					<p:commandButton icon="icon-edit" title="Editar" process="@this" partialSubmit="true"
+						update="panelCadastro">
+						<f:setPropertyActionListener target="#{bean.tipoRecebimento}" value="#{item}"/>
+					</p:commandButton>
+					<p:commandButton icon="icon-delete" title="Excluir" process="@this"  
+						partialSubmit="true" oncomplete="PF('confirmacaoExclusao').show()" 
+						disabled="#{item.descricao == 'Dinheiro'}">
+						<f:setPropertyActionListener target="#{bean.tipoRecebimento}" value="#{item}"/>	
+					</p:commandButton>
+				</p:column>
+			</p:dataTable>
+		</p:panel>
+		
+		<p:confirmDialog header="Exclusão de tipo recebimento" message="Tem certeza que deseja excluir o tipo recebimento?"
+	    		widgetVar="confirmacaoExclusao" >
+	    	<p:commandButton value="Sim" action="#{bean.excluir()}" partialSubmit="true" process="@this" 
+	    		oncomplete="PF('confirmacaoExclusao').hide();" icon="icon-button-ok" update="table"/>
+	    	<p:button value="Não" onclick="PF('confirmacaoExclusao').hide(); return false;" icon="icon-button-no"/>
+	    </p:confirmDialog>
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,98 @@
+<ui:composition template="/WEB-INF/template/LayoutPadrao.html"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+	<ui:define name="title">Cadastro de Movimento</ui:define>
+	<ui:param name="bean" value="#{cadastroMovimentoBean}" />
+
+	<ui:define name="corpo">
+		<p:panel header="Cadastro de movimento" id="panelCadastro">
+
+			<ui:include src="/WEB-INF/template/botoesCadastro.xhtml" />
+
+			<p:panelGrid columns="2" columnClasses="rotulo, campo" layout="grid">
+				<p:outputLabel value="Data lançamento" for="lancamento" />
+				<p:calendar id="lancamento" required="true"
+					requiredMessage="Informe a data de lançamento"
+					value="#{cadastroMovimentoBean.movimento.dataLancamento}"
+					maxdate="#{cadastroMovimentoBean.dataAtual}" effect="fade"
+					pattern="dd/MM/yyyy" locale="pt_BR" showButtonPanel="true"
+					navigator="true" />
+
+				<p:outputLabel value="Descrição" for="descricao" />
+				<p:inputText id="descricao" size="35" maxlength="50" required="true"
+					requiredMessage="Informe a descrição"
+					value="#{cadastroMovimentoBean.movimento.descricao}" />
+
+				<p:outputLabel value="Valor" for="valor" />
+				<p:inputText id="valor" required="true" styleClass="moeda" onfocus="configurarMoeda();"
+					converter="moedaConverter" requiredMessage="Informe o valor"
+					value="#{cadastroMovimentoBean.movimento.valor}" />
+
+				<p:outputLabel value="Tipo lançamento" for="tipo" />
+				<p:selectOneMenu id="tipo" required="true"
+					requiredMessage="Informe o tipo do lançamento"
+					value="#{cadastroMovimentoBean.movimento.tipoMovimento}">
+					<f:selectItem itemLabel="Selecione o tipo" />
+					<f:selectItems
+						value="#{cadastroMovimentoBean.listarTipoMovimento()}" />
+				</p:selectOneMenu>
+			</p:panelGrid>
+		</p:panel>
+		<p:panel styleClass="sem-fundo">
+			<p:dataTable id="table" value="#{bean.listarMovimentos()}" var="item"
+				style="margin-top: 5px; width: 99,5%"
+				emptyMessage="Nenhum movimento cadastrado" rows="10"
+				paginator="true" rowsPerPageTemplate="10 20 30"
+				paginatorAlwaysVisible="false" paginatorPosition="top"
+				reflow="true" styleClass="column_auto">
+
+				<f:facet name="header">
+					Últimos movimentos cadastrados
+				</f:facet>
+
+				<p:column headerText="Lançamento" sortBy="#{item.dataLancamento}"
+					style="width: 140px; text-align: center" >
+					<h:outputText value="#{item.dataLancamento}">
+						<f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+					</h:outputText>
+				</p:column>
+				<p:column headerText="Descrição" sortBy="#{item.descricao}" >
+					<h:outputText value="#{item.descricao}" />
+				</p:column>
+				<p:column headerText="Valor" sortBy="#{item.valor}"
+					style="width: 125px; text-align: center">
+					<h:outputText value="#{item.valor}">
+						<f:convertNumber locale="pt_BR" currencySymbol="R$ "
+							type="currency" />
+					</h:outputText>
+				</p:column>
+				<p:column headerText="Tipo de lançamento" sortBy="#{item.tipoMovimento.descricao}"
+					style="width: 160px; text-align: center">
+					<h:outputText value="#{item.tipoMovimento.descricao}" />
+				</p:column>
+
+				<p:columnGroup type="footer">
+					<p:row>
+						<p:column footerText="Total créditos: " colspan="3" styleClass="text_right"/>
+						<p:column styleClass="credito right" footerText="#{cadastroMovimentoBean.saldo.Crédito}"/>
+					</p:row>
+
+					<p:row>
+						<p:column footerText="Total débitos: " colspan="3" styleClass="text_right"/>
+						<p:column styleClass="debito" footerText="#{cadastroMovimentoBean.saldo.Débito}" />
+					</p:row>
+
+					<p:row>
+						<p:column footerText="Saldo: " colspan="3" styleClass="text_right"/>
+						<p:column id="total" footerText="#{cadastroMovimentoBean.saldo.total}" 
+							styleClass="#{cadastroMovimentoBean.saldo.valorTotal > 0 ? 'credito' : 'debito'}"/>
+					</p:row>
+				</p:columnGroup>
+			</p:dataTable>
+		</p:panel>
+	</ui:define>
+</ui:composition>

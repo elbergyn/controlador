@@ -1,0 +1,33 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" 
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+	<h:outputStylesheet library="css" name="menu_principal_teste.css" />
+	
+	<div class="menu_principal">
+		<h:form >
+			<p:tabView styleClass="remover_borda" orientation="top">
+				<p:tab title="Gerência de Vendas">
+					<p:menubar styleClass="remover_borda" >
+						<ui:include src="/WEB-INF/template/itensMenuVendas.xhtml" />
+					</p:menubar>
+				</p:tab>
+				<p:tab title="Controle Financeiro">
+					<p:menubar styleClass="remover_borda" >
+						<ui:include src="/WEB-INF/template/itensMenuFinanceiro.xhtml" />
+					</p:menubar>
+				</p:tab>
+				<p:tab title="Admin">
+					<p:menubar styleClass="remover_borda" >
+						<p:menuitem value="Usuário" outcome="pretty:cadUsuario"/>
+						<p:menuitem value="Log de erro" outcome="pretty:logErro"/>
+					</p:menubar>
+				</p:tab>
+			</p:tabView>
+		</h:form>
+	</div>
+	<div style="clear: both"></div>
+	
+</ui:composition>

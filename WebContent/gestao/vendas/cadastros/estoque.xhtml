@@ -1,0 +1,94 @@
+<ui:composition template="/WEB-INF/template/LayoutPadrao.html"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+	<ui:define name="title">Estoque</ui:define>
+
+	<ui:param name="bean" value="#{cadastroEstoqueBean}" />
+	
+	<ui:define name="corpo">
+		<p:panel header="Lançamento de estoque" id="panelCadastro">
+						
+			<ui:include src="/WEB-INF/template/botoesCadastro.xhtml"/>
+			<p:panelGrid columns="4" columnClasses="rotulo, campo, rotulo, campo" layout="grid" id="cadastro">
+				<p:outputLabel value="Código produto: " for="codigo"/>
+				<p:inputText id="codigo" value="#{cadastroEstoqueBean.produto.id}"
+					size="10" required="true" min="0" onkeyup="validarNumero(this);"
+					requiredMessage="Informe o código do produto">
+					<p:ajax event="change" process="@this, codigo" listener="#{cadastroEstoqueBean.filtrarPorIdProduto()}" 
+						update="cadastro"/>
+				</p:inputText>
+				
+				<p:outputLabel value="Produto: " for="produto" />
+				<p:autoComplete id="produto" value="#{cadastroEstoqueBean.produto}" 
+					var="item" itemValue="#{item}" itemLabel="#{item.descricao}" 
+					completeMethod="#{cadastroEstoqueBean.produtosAutoComplete}"
+					minQueryLength="3"
+					dropdown="true" size="30" required="true" requiredMessage="Informe o produto">
+					<p:ajax event="itemSelect" update="cadastro" listener="#{cadastroEstoqueBean.itemSelect}" />
+				</p:autoComplete>
+				
+				<p:outputLabel value="Tipo de lançamento" for="lancamento" />
+				<p:selectOneRadio id="lancamento" value="#{cadastroEstoqueBean.tipoLancamento}">
+					<f:selectItems var="item" value="#{cadastroEstoqueBean.tipoLancamentos}"/>
+				</p:selectOneRadio>
+				
+				<p:outputLabel value="Quantidade" for="qtde" />
+				<p:spinner id="qtde" required="true" requiredMessage="Informe a quantidade" 
+					value="#{cadastroEstoqueBean.qtde}" 
+					min="1" onkeyup="validarNumero(this);"
+					validator="maiorZeroValidation"/>
+					
+			</p:panelGrid>
+		</p:panel>
+		
+		<p:panel>
+			<p:dataTable id="table" var="item"
+				value="#{cadastroEstoqueBean.estoques}" editable="true"
+				editMode="cell" reflow="true" style="margin-top: 5px; width: 99,5%"
+				emptyMessage="Nenhum produto cadastrado" rows="10"
+				paginator="true" rowsPerPageTemplate="10 20 30 50 100"
+				paginatorAlwaysVisible="false" paginatorPosition="top"
+				rowKey="#{item.id}" liveScroll="true"
+				resizableColumns="true" filterDelay="300" rowStyleClass="#{cadastroEstoqueBean.styleClass(item)}">
+			
+				<p:column headerText="Cód Prod" style="width: 90px; text-align: center" 
+					sortBy="#{item.produto.id}">
+					<p:outputLabel value="#{item.produto.id}" />
+				</p:column>
+				
+				<p:column headerText="Produto" sortBy="#{item.produto.descricao}"
+					filterBy="#{item.produto.descricao}" filterMatchMode="contains" >
+					<p:outputLabel value="#{item.produto.descricao}" />
+				</p:column>
+			
+				<p:column headerText="Qtde Miníma" sortBy="#{item.qtdeMinima}" style="width: 115px; text-align: center">
+					<p:outputLabel value="#{item.qtdeMinima}"/>
+				</p:column>
+			
+				<p:column headerText="Qtde Estoque" sortBy="#{item.qtde}" style="width: 115px; text-align: center">
+					<p:outputLabel value="#{item.qtde}"/>
+				</p:column>
+				
+				<p:column style="text-align: center; width: 50px;">
+					<p:commandButton icon="icon-edit" title="Editar" process="@this" partialSubmit="true"
+						update="panelCadastro">
+						<f:setPropertyActionListener target="#{bean.estoque}" value="#{item}"/>
+					</p:commandButton>
+				</p:column>
+			</p:dataTable>
+		</p:panel>
+
+		<!-- 
+		
+		<p:confirmDialog header="Exclusão de produto" message="Tem certeza que deseja excluir o produto?"
+	    		widgetVar="confirmacaoExclusao" >
+	    	<p:commandButton value="Sim" partialSubmit="true" process="@this" 
+	    		oncomplete="PF('confirmacaoExclusao').hide();" icon="icon-button-ok" update="table"/>
+	    	<p:button value="Não" onclick="PF('confirmacaoExclusao').hide(); return false;" icon="icon-button-no"/>
+	    </p:confirmDialog> -->
+	</ui:define>
+</ui:composition>

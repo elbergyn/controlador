@@ -1,0 +1,81 @@
+<ui:composition template="/WEB-INF/template/LayoutPadrao.html"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+	<ui:define name="title">Cadastro de valores</ui:define>
+
+	<ui:param name="bean" value="#{cadastroValorProdutoBean}" />
+	
+	<ui:define name="corpo">		
+		<p:panel>
+			<p:dataTable id="table" value="#{cadastroValorProdutoBean.valores}"
+				var="item" style="margin-top: 5px; width: 99,5%" 
+				emptyMessage="Nenhum produto cadastrado" rows="10" paginator="true"
+				rowsPerPageTemplate="10 20 30" paginatorAlwaysVisible="false" paginatorPosition="top" 
+				lazy="true" 
+				rowIndexVar="row"
+				resizableColumns="true" filterDelay="300" 
+				editable="true" editMode="cell" >
+				
+				<p:ajax event="cellEdit" listener="#{cadastroValorProdutoBean.onCellEdit}" />
+			
+				<p:column headerText="Cód Prod" style="width: 90px; text-align: center" 
+					sortBy="#{item.id}">
+					<p:outputLabel value="#{item.id}" />
+				</p:column>
+				
+				<p:column headerText="Produto" sortBy="#{item.descricao}"
+					filterBy="#{item.descricao}" filterMatchMode="contains">
+					<p:outputLabel value="#{item.descricao}" />
+				</p:column>
+			
+				<p:column headerText="Valor custo" sortBy="#{item.valor.valorCusto}">
+					<p:cellEditor>
+						<f:facet name="output">
+							<p:outputLabel value="#{item.valor.valorCusto}" >
+								<f:convertNumber type="currency" />
+							</p:outputLabel>
+						</f:facet>
+						<f:facet name="input">
+							<p:inputText value="#{item.valor.valorCusto}" id="custo" 
+								styleClass="moeda" onfocus="configurarMoeda();"
+								converter="moedaConverter"
+								validator="maiorZeroValidation" >
+								<p:ajax event="change" update="table:#{row}:atuValor" />	
+							</p:inputText>
+						</f:facet>
+					</p:cellEditor>
+				</p:column>
+			
+				<p:column headerText="Lucro perc" sortBy="#{item.valor.lucroPercentual}">
+					<p:outputLabel value="#{item.valor.lucroPercentual}">
+						<f:convertNumber type="percent"/>
+					</p:outputLabel>
+				</p:column>
+				
+				<p:column headerText="Valor Venda" sortBy="#{item.valor.valorVenda}">
+					<p:outputLabel value="#{item.valor.valorVenda}" id="atuValor">
+						<f:convertNumber type="currency" />
+					</p:outputLabel>
+				</p:column>
+				
+				<p:column headerText="Entrada estoque" sortBy="#{item.estoque.qtde}">
+					<p:cellEditor>
+						<f:facet name="output">
+							<p:outputLabel value="#{item.estoque.qtde}" />
+						</f:facet>
+						<f:facet name="input" >
+							<p:spinner  
+								value="#{cadastroEstoqueBean.qtde}" 
+								min="1" onkeyup="validarNumero(this);"
+								validator="maiorZeroValidation"/>
+						</f:facet>
+					</p:cellEditor>
+				</p:column>
+			</p:dataTable>
+		</p:panel>
+	</ui:define>
+</ui:composition>

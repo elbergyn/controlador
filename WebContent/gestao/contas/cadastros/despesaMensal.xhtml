@@ -1,0 +1,76 @@
+<ui:composition template="/WEB-INF/template/LayoutPadrao.html"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+	<ui:define name="title">Cadastro de despesas mensais</ui:define>
+	<ui:param name="bean" value="#{cadastroDespesasMensaisBean}" />
+	
+	<ui:define name="corpo">
+		<p:panel header="Cadastro de despesas mensais" id="panelCadastro">
+			
+			<ui:include src="/WEB-INF/template/botoesCadastro.xhtml" />
+			
+			<p:panelGrid columns="2" columnClasses="rotulo, campo" layout="grid" styleClass="gridSimples">
+				<p:outputLabel value="Descrição" for="descricao" />
+				<p:inputText id="descricao" size="35" maxlength="40" required="true" 
+					requiredMessage="Informe a descrição"  styleClass="captalize"
+					value="#{cadastroDespesasMensaisBean.despesa.descricao}"/>
+								
+				<p:outputLabel for="valor" value="Valor"/>
+				<p:inputText id="valor" required="true" styleClass="moeda" onfocus="configurarMoeda();"
+					value="#{cadastroDespesasMensaisBean.despesa.valor}"
+					requiredMessage="Informe o valor"
+					converter="moedaConverter"/>
+				
+				<p:outputLabel for="diaVencimento" value="Dia vencimento"/>
+				<p:spinner id="diaVencimento" required="true"
+					requiredMessage="Informe o dia de vencimento"
+					value="#{cadastroDespesasMensaisBean.despesa.diaVencimento}"
+					min="1" max="31" size="5"/>
+			</p:panelGrid>
+		</p:panel>
+		<p:panel styleClass="sem-fundo">
+			<p:dataTable id="table" value="#{bean.listarDespesas()}" var="item"
+				style="margin-top: 5px; width: 99,5%" emptyMessage="Nenhum categoria cadastrada" rows="20" paginator="true"
+				rowsPerPageTemplate="10 20 30" paginatorAlwaysVisible="false" paginatorPosition="top" 
+				styleClass="column_auto" reflow="true">
+							
+				<f:facet name="header">
+					Despesas mensais
+				</f:facet>
+						
+				<p:column headerText="Descrição" sortBy="#{item.descricao}">
+					<h:outputText value="#{item.descricao}" />
+				</p:column>
+				<p:column headerText="Dia vencimento" style="text-align: center; width: 150px" sortBy="#{item.diaVencimento}">
+					<h:outputText value="#{item.diaVencimento}" />
+				</p:column>
+				<p:column headerText="Valor" style="text-align: center; width: 150px" sortBy="#{item.valor}">
+					<h:outputText value="#{item.valor}" >
+						<f:convertNumber type="currency"/>
+					</h:outputText>
+				</p:column>
+				<p:column style="text-align: center; width: 90px;">
+					<p:commandButton icon="icon-edit" title="Editar" process="@this" partialSubmit="true"
+						update="panelCadastro" >
+						<f:setPropertyActionListener target="#{bean.despesa}" value="#{item}"/>
+					</p:commandButton>
+					<p:commandButton icon="icon-delete" title="Excluir" process="@this"  
+						partialSubmit="true" oncomplete="PF('confirmacaoExclusao').show()" >
+						<f:setPropertyActionListener target="#{bean.despesa}" value="#{item}"/>	
+					</p:commandButton>
+				</p:column>
+			</p:dataTable>
+		</p:panel>
+		
+		<p:confirmDialog header="Exclusão de banco" message="Tem certeza que deseja excluir o banco?"
+	    		widgetVar="confirmacaoExclusao" >
+	    	<p:commandButton value="Sim" action="#{bean.excluir()}" partialSubmit="true" process="@this" 
+	    		oncomplete="PF('confirmacaoExclusao').hide();" icon="icon-button-ok" update="table"/>
+	    	<p:button value="Não" onclick="PF('confirmacaoExclusao').hide(); return false;" icon="icon-button-no"/>
+	    </p:confirmDialog>
+	</ui:define>
+</ui:composition>

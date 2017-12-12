@@ -1,0 +1,37 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+	<p:submenu label="Parametros" >
+		<p:menuitem value="Banco" url="/cad_banco/" />
+		<p:menuitem value="Bandeiras cartão" url="/cad_bandeira/"/>
+		<p:menuitem value="Categorias de despesas" url="/cad_categoria/"/>
+		<p:menuitem value="Cartão de crédito" url="/cad_cartao/"/>
+		<p:menuitem value="Cheque" url="/cad_cheque/"/>
+		<p:menuitem value="Devedor" url="/cad_devedor/"/>
+		<p:menuitem value="Despesas mensais" url="/cad_despesas/"/>
+	</p:submenu>
+	
+	<p:submenu label="Conta pagar">
+		<p:menuitem value="Registrar conta" title="Lançamentos com vencimentos futuros" url="/conta_pagar/"/>
+		<p:menuitem value="Registrar pagamento" title="Realizar baixa de pagamentos realizados" url="/registrar_pagamento/"/>
+		<p:menuitem value="Cancelar pagamento" title="Cancela pagamentos realizados no dia" url="/cancelar_pagamento/"/>
+		<p:menuitem value="Consultar contas" url="/pesq_contas/"/>
+		<p:menuitem value="Cheques emitidos" url="/pesq_cheque/"/>
+		<p:menuitem value="Pagamentos realizados" url="/pesq_pagamentos/"/>
+	</p:submenu>
+	<p:submenu label="Conta receber" url="">
+		<p:menuitem value="Registrar conta" title="Lançamentos de valores a receber" url="/conta_receber/"/>
+		<p:menuitem value="Registrar recebimento" title="Realizar baixa de recebimento" url="/registrar_recebimento/"/>
+		<p:menuitem value="Cancelar recebimento" title="Cancela recebimentos realizados no dia" url="/cancelar_recebimento/"/>
+		<p:menuitem value="Consultar contas" url="/pesq_recebimentos/"/>
+		<p:menuitem value="Registros de recebimentos" url="/pesq_recebimentos_realizados/"/>
+	</p:submenu>
+	<p:submenu label="Lançamentos">
+		<p:menuitem value="Registrar lançamento" title="Lançamentos de entradas e saídas de valores imediatos" url="/cad_movimento/"/>
+		<p:menuitem value="Consultar lançamento" url=""/>
+	</p:submenu>
+
+</ui:composition>

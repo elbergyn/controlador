@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title>Login</title>
+	<h:outputStylesheet library="css" name="login.css" />
+</h:head>
+
+<h:body>
+		<h3 class="aw-page-title"></h3>
+		<h:form id="frmHospedagem" target="_blank">
+			<p:messages autoUpdate="true" closable="true" />
+			<p:toolbar>
+				<p:toolbarGroup>
+					<p:button value="Novo"  />
+					<p:commandButton value="Salvar" icon="fa fa-save" />
+				</p:toolbarGroup>
+				<p:toolbarGroup align="right">
+					<p:commandButton title="Imprimir" icon="fa fa-print" />
+					<p:commandButton icon="fa fa-sign-out" value="Checkout" />
+
+
+					<p:commandButton value="Finalizar" />
+					<p:commandButton value="Financeiro" />
+					<p:commandButton value="Cancelar" />
+
+					<p:button value="Pesquisar" icon="fa fa-search"/>
+				</p:toolbarGroup>
+			</p:toolbar>
+			<div class="ui-fluid">
+				<p:panelGrid columns="3" layout="grid" id="panel"
+					columnClasses="ui-grid-col-1, ui-grid-col-4, ui-grid-col-1"
+					style="margin-top: 20px" styleClass="panelgrid-noborder">
+					<p:outputLabel value="Codigo"/>
+					<p:outputLabel
+						style="font-weight: bold" />
+
+					<p:outputLabel value="Cliente" for="cliente" />
+
+					<p:autoComplete id="cliente"
+						var="cliente" 
+						forceSelection="true"
+						queryDelay="1000">
+						<p:column>
+							<h:outputText  />
+						</p:column>
+						<p:column>
+							<h:outputText  />
+						</p:column>
+					</p:autoComplete>
+					<p:commandButton icon="fa fa-info-circle"
+						title="Informaçoes cliente"
+						process="@this" 
+						oncomplete="PF('informacaoCliente').show()" />
+
+				</p:panelGrid>
+				<p:panelGrid columns="6" layout="grid"
+					columnClasses="ui-grid-col-2, ui-grid-col-2, ui-grid-col-2, ui-grid-col-2, ui-grid-col-2, ui-grid-col-2"
+					styleClass="panelgrid-noborder">
+
+					<p:outputLabel value="Total diarias"
+						style="font-weight: bold; color: green" />
+					<h:outputText
+						style="font-weight: bold; color: green" id="totalDiarias">
+					</h:outputText>
+
+					<p:outputLabel value="Total Consumo"
+						style="font-weight: bold; color: purple" />
+					<h:outputText
+						style="font-weight: bold; color: purple" id="totalItens">
+					</h:outputText>
+
+					<p:outputLabel value="Desconto" for="desconto" />
+					<p:inputText id="desconto"
+						styleClass="moeda">
+					</p:inputText>
+
+					<p:outputLabel value="Total Serviços"
+						style="font-weight: bold; color: gray" />
+					<h:outputText
+						style="font-weight: bold; color: gray" id="totalServicos">
+					</h:outputText>
+
+					<p:outputLabel value="SubTotal"
+						style="font-weight: bold; color: red" />
+					<h:outputText 
+						style="font-weight: bold; color: red" id="subtotal">
+					</h:outputText>
+
+					<p:outputLabel value="Total" style="font-weight: bold; color: blue" />
+					<h:outputText 
+						style="font-weight: bold; color: blue" id="total">
+					</h:outputText>
+
+					<p:outputLabel value="Status" />
+					<h:outputLabel
+						 />
+				</p:panelGrid>
+				<p:tabView id="tabControle">
+					<p:tab title="Hospedes">
+						
+					</p:tab>
+					<p:tab title="Consumo">
+						
+					</p:tab>
+					<p:tab title="Serviços">
+						
+					</p:tab>
+				</p:tabView>
+			</div>
+			<ui:include src="testeDialog.xhtml"></ui:include>
+		</h:form>
+</h:body>
+
+</html>

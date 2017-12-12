@@ -1,0 +1,113 @@
+<ui:composition template="/WEB-INF/template/LayoutPadrao.html"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+	<ui:define name="title">Histórico de estoque</ui:define>
+	<ui:param name="bean" value="#{pesqMovimentoEstoqueBean}" />
+	
+	<ui:define name="corpo">
+		<p:panel header="Filtrar históricos" id="panelFiltro">
+			
+			<ui:include src="/WEB-INF/template/botoesPesquisa.xhtml" />
+			
+			<p:panelGrid columns="2" columnClasses="rotulo, campo">
+						
+				<p:outputLabel value="Descrição" for="descricao" />
+				<p:inputText id="descricao" size="30" maxlength="30" 
+					value="#{pesqMovimentoEstoqueBean.filtro.descricaoProd}"/>
+							
+				<p:outputLabel value="Data inicio" for="movimentoini" />
+				<p:calendar id="movimentoini"
+					value="#{pesqMovimentoEstoqueBean.filtro.dataInicio}"
+					effect="fade"
+					pattern="dd/MM/yyyy"
+					locale="pt_BR"
+					showButtonPanel="true"
+					navigator="true"/>
+					
+				<p:outputLabel value="Data final" for="movimentofim" />
+				<p:calendar id="movimentofim" 
+					value="#{pesqMovimentoEstoqueBean.filtro.dataFim}"
+					effect="fade"
+					pattern="dd/MM/yyyy"
+					locale="pt_BR"
+					showButtonPanel="true"
+					navigator="true"/>
+				
+				<p:outputLabel value="Tipo lançamento" for="lancamento" />	
+				<p:selectOneMenu id="lancamento" value="#{pesqMovimentoEstoqueBean.filtro.tipoLancamento}">
+					<f:selectItem itemLabel="Selecione o tipo" />
+					<f:selectItems var="item" value="#{pesqMovimentoEstoqueBean.tipoLancamentos}"/>
+				</p:selectOneMenu>
+				
+			</p:panelGrid>
+		</p:panel>
+		<p:panel id="panelItens" >
+			<p:dataTable id="table" value="#{pesqMovimentoEstoqueBean.produtos}" var="item"
+				style="margin-top: 5px; width: 99%" reflow="true"
+				emptyMessage="Nenhum item encontrado" rows="10"
+				paginator="true" rowsPerPageTemplate="10 20 30"
+				paginatorAlwaysVisible="false" paginatorPosition="top"
+				selectionMode="single"
+				selection="#{pesqMovimentoEstoqueBean.produto}"
+				rowKey="#{item.id}">
+
+				<f:facet name="header">
+					Histórico de movimento de estoque
+				</f:facet>
+				
+				<p:ajax event="rowSelect" listener="#{pesqMovimentoEstoqueBean.rowSelect}"
+					oncomplete="PF('dlgMovimentoEstoque').show()"
+					update="tableDlg" />
+				
+				<p:column headerText="Cód" style="width: 100px; text-align: center ">
+					<h:outputText value="#{item.id}"   />
+				</p:column>
+				
+				<p:column headerText="Produto">
+					<h:outputText value="#{item.descricao}" />
+				</p:column>
+			</p:dataTable>
+		</p:panel>
+		
+		<p:dialog header="Histórico de movimento" widgetVar="dlgMovimentoEstoque" modal="true" fitViewport="true"
+			position="center center" resizable="false" width="80%" id="tableDlg">
+			<p:dataTable value="#{pesqMovimentoEstoqueBean.movimentos}" var="item"
+				style="margin-top: 5px; width: 99%" reflow="true"
+				emptyMessage="Nenhum item encontrado" rows="10"
+				paginator="true" rowsPerPageTemplate="10 20 30"
+				paginatorAlwaysVisible="false" paginatorPosition="top"
+				scrollable="true" scrollHeight="250">
+				
+				<f:facet name="header">
+					<h:outputText value="Produto: #{pesqMovimentoEstoqueBean.produto.descricao}" />
+				</f:facet>
+				
+				<p:column headerText="Lançamento" sortBy="#{item.data}">
+					<h:outputText value="#{item.data}" >
+						<f:convertDateTime locale="pt_BR" />
+					</h:outputText>
+				</p:column>
+				
+				<p:column headerText="Quantidade" sortBy="#{item.qtde}">
+					<h:outputText value="#{item.qtde}"/>
+				</p:column>
+				
+				<p:column headerText="Tipo Lançamento" sortBy="#{item.tipoLancamento.descricao}">
+					<h:outputText value="#{item.tipoLancamento.descricao}"/>
+				</p:column>			
+				
+				<p:columnGroup type="footer">
+					<p:row>
+						<p:column footerText="Estoque atual"/>
+						<p:column footerText="#{pesqMovimentoEstoqueBean.produto.estoque.qtde} 
+							#{pesqMovimentoEstoqueBean.produto.unidade}'s" />
+					</p:row>
+				</p:columnGroup>
+			</p:dataTable>
+		</p:dialog>
+	</ui:define>
+</ui:composition>

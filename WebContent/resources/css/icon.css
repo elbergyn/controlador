@@ -1,0 +1,74 @@
+.icon-button-add{
+	background: url(#{resource['images/16/add.png']}) no-repeat !important;
+}
+
+.icon-button-remove{
+	background: url(#{resource['images/16/remove.png']}) no-repeat !important;
+}
+
+.icon-button-no{
+	background: url(#{resource['images/16/button_no.png']}) no-repeat !important;
+}
+
+.icon-button-ok{
+	background: url(#{resource['images/16/button_ok.png']}) no-repeat !important;
+}
+
+.icon-cancel{
+	background: url(#{resource['images/16/delete.png']}) no-repeat !important;
+}
+
+.icon-calc{
+	background: url(#{resource['images/16/calc.png']}) no-repeat !important;
+}
+
+.icon-cifrao{
+	background: url(#{resource['images/16/cifrao.png']}) no-repeat !important;
+}
+
+.icon-edit{
+	background: url(#{resource['images/16/edit.png']}) no-repeat !important;
+}
+
+.icon-empty{
+	background: url(#{resource['images/16/empty.png']}) no-repeat !important;
+}
+
+.icon-filter{
+	background: url(#{resource['images/16/search2.png']}) no-repeat !important;
+}
+
+.icon-delete{
+	/* background: url(#{resource['images/16/delete.png']}) no-repeat !important; */
+	background: url(#{resource['images/16/button_no.png']}) no-repeat !important;
+}
+
+.icon-money{
+	background: url(#{resource['images/16/money.png']}) no-repeat !important;
+}
+
+.icon-new{
+	background: url(#{resource['images/16/new.png']}) no-repeat !important;
+}
+
+/*Adicionar o icone*/
+.icon-send{
+	background: url(#{resource['images/16/send.png']}) no-repeat !important;
+}
+
+/*Adicionar o icone*/
+.icon-return{
+	background: url(#{resource['images/16/return1.png']}) no-repeat !important;
+}
+
+.icon-save{
+	background: url(#{resource['images/16/save.png']}) no-repeat !important;
+}
+
+.icon-search{
+	background: url(#{resource['images/16/search.png']}) no-repeat !important;
+}
+
+.icon-view{
+	background: url(#{resource['images/16/view.png']}) no-repeat !important;
+}

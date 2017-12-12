@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+	<h:head>
+		<h:outputStylesheet library="css" name="layoutDialog.css" />
+		<h:outputStylesheet library="css" name="icon.css" />
+		<h:outputScript library="js" name="funcoes.js" />
+		<h:outputScript library="js" name="jquery.maskmoney.js" />
+		<script>
+			$(function(){
+				var dlg = $('.ui-dialog');
+				dlg.show();
+				
+				var t_width = $(document).width();
+				var t_height = $(document).height();
+				var d_width = dlg.width();
+				var d_height = dlg.height();
+				
+				var w_center = t_width/2;
+				var h_center = t_height/2;
+				
+				var left = w_center - (d_width/2);
+				var top = h_center - (d_height);
+				
+				dlg.animate({'left':left},300);
+				dlg.animate({'top':top},300);
+				
+								
+			});
+		</script>
+	</h:head>
+	
+	<h:body>
+		<p:growl autoUpdate="true" showSummary="false" showDetail="true" id="messagesDialog" />
+		<h:form id="formDialog" prependId="false">
+			<p:dialog header="teste" widgetVar="teste" height="100" width="100">
+				teste dialog
+			</p:dialog>
+		</h:form>
+	</h:body>
+</html>

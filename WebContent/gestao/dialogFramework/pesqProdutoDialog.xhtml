@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+	<h:head>
+		
+	</h:head>
+		
+	<h:body>
+		<p:panel header="Pesquisar produtos" id="panelFiltro" >
+			<p:panelGrid columns="2" columnClasses="rotulo, campo" layout="grid">
+				<p:outputLabel value="Descrição" for="descricao" />
+				<p:inputText id="descricao" value="#{pesqProdutoDialogBean.produto.descricao}"  />
+				
+				<p:outputLabel value="Cód. Barras" for="barras" />
+				<p:inputText id="barras" value="#{pesqProdutoDialogBean.produto.codBarras}"  />
+			</p:panelGrid>
+			<p:panelGrid columns="1" layout="grid">
+				<p:commandButton action="#{pesqProdutoDialogBean.pesquisar()}" 
+					value="Pesquisar" icon="icon-search"/>
+			</p:panelGrid>
+		</p:panel>
+		
+		<p:panel id="panelItens">
+			<p:dataTable id="table" value="#{pesqProdutoDialogBean.produtos}" var="item"
+				style="margin-top: 5px; width: 99%"
+				emptyMessage="Nenhum produto localizado" 
+				rows="12" layout="grid"
+				paginator="true" rowsPerPageTemplate="10 20 30 50 100" 
+				paginatorAlwaysVisible="false" paginatorPosition="top">
+
+				<f:facet name="header">
+					Produtos
+				</f:facet>
+
+				<p:column headerText="Cód">
+					<h:outputLabel value="#{item.id}" />
+				</p:column>
+				
+				<p:column headerText="Produto">
+					<h:outputLabel value="#{item.descricao}" />
+				</p:column>
+				
+				<p:column headerText="Valor">
+					<h:outputLabel value="#{item.valor}" >
+						<f:convertNumber type="currency" />
+					</h:outputLabel>
+				</p:column>
+			</p:dataTable>
+		</p:panel>
+	</h:body>
+
+</html>

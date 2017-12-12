@@ -1,0 +1,164 @@
+<ui:composition template="/WEB-INF/template/LayoutPadrao.html"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+	<ui:define name="title">Pesquisa de Contas</ui:define>
+	<ui:param name="bean" value="#{pesqContaPagarBean}" />
+	
+	<ui:define name="corpo">
+		<p:panel header="Filtro de contas" id="panelFiltro">
+			
+			<ui:include src="/WEB-INF/template/botoesPesquisa.xhtml" />
+			
+			<p:panelGrid columns="4" columnClasses="rotulo, campo,rotulo, campo" layout="grid">
+				
+				<p:outputLabel for="categoria" value="Categoria" />
+				<p:selectOneMenu id="categoria" 
+					value="#{pesqContaPagarBean.categoria}" >
+					<f:selectItem itemLabel="Selecione" />
+					<f:selectItems value="#{pesqContaPagarBean.listarCategorias()}" var="cat" 
+					itemLabel="#{cat.descricao}" itemValue="#{cat}" />
+				</p:selectOneMenu>
+				
+				<p:outputLabel value="Descrição" for="descricao" />
+				<p:inputText id="descricao" size="30" maxlength="30" 
+					value="#{pesqContaPagarBean.descricao}"/>								
+
+				<p:outputLabel value="Inicio vencimento" for="vencimentoini" />
+				<p:calendar id="vencimentoini"
+					value="#{pesqContaPagarBean.dataVencimentoIni}"
+					effect="fade"
+					pattern="dd/MM/yyyy"
+					locale="pt_BR"
+					showButtonPanel="true"
+					navigator="true"/>
+					
+				<p:outputLabel value="Final vencimento" for="vencimentofim" />
+				<p:calendar id="vencimentofim" 
+					value="#{pesqContaPagarBean.dataVencimentoFim}"
+					effect="fade"
+					pattern="dd/MM/yyyy"
+					locale="pt_BR"
+					showButtonPanel="true"
+					navigator="true"/>
+														
+				<p:outputLabel for="tipoPag" value="Tipo de pagamento" />
+				<p:selectOneMenu id="tipoPag" value="#{pesqContaPagarBean.tipoPagamento}">
+					<f:selectItem itemLabel="Selecione tipo" />
+					<f:selectItems value="#{pesqContaPagarBean.listarTiposPagamentos()}" 
+						var="tipo" itemValue="#{tipo}" />
+						<p:ajax event="change" partialSubmit="true" process="@this" update="panelDetalhe" />
+				</p:selectOneMenu>
+				
+				<p:outputLabel for="statusPag" value="Status" />
+				<p:selectOneMenu id="statusPag" 
+					value="#{pesqContaPagarBean.situacao}" >
+					<f:selectItem itemLabel="Selecione status" />
+					<f:selectItems value="#{pesqContaPagarBean.listarSituacaoPagamentos()}" var="status" 
+					itemLabel="#{status.descricao}" itemValue="#{status}"/>
+				</p:selectOneMenu>
+			</p:panelGrid>
+			
+			
+			<p:panelGrid columns="2" columnClasses="rotulo, campo" id="panelDetalhe" layout="grid">
+				<p:column rendered="#{pesqContaPagarBean.mostrarCheque}">
+					<p:outputLabel for="pc_cheque" value="Cheque" />
+				</p:column>
+				<p:column rendered="#{pesqContaPagarBean.mostrarCheque}">
+					<p:selectOneMenu id="pc_cheque"
+						value="#{pesqContaPagarBean.cheque}"
+						styleClass="ui-selectonemenu-normal">
+						<f:selectItem itemLabel="Selecione o cheque" />
+						<f:selectItems value="#{pesqContaPagarBean.cheques}" var="item"
+							itemLabel="#{item.descricao}" itemValue="#{item}" />
+					</p:selectOneMenu>
+				</p:column>
+				
+				<p:column rendered="#{pesqContaPagarBean.mostrarCartao}" >
+					<p:outputLabel for="cartao" value="Cartão"/>
+				</p:column>
+				<p:column rendered="#{pesqContaPagarBean.mostrarCartao}" >
+					<p:selectOneMenu id="cartao" styleClass="ui-selectonemenu-normal"
+						value="#{pesqContaPagarBean.cartao}" style="width: 184px;">
+						<f:selectItem itemLabel="Selecione cartão" />
+						<f:selectItems value="#{pesqContaPagarBean.cartoes()}" var="cartao" 
+						itemLabel="#{cartao.descricao}" itemValue="#{cartao}"/>
+					</p:selectOneMenu>
+				</p:column>
+			</p:panelGrid>
+		</p:panel>
+		<p:panel id="panelItens">
+			<p:dataTable id="table" value="#{pesqContaPagarBean.listarDebitos()}" var="item"
+				style="margin-top: 5px; width: 99,5%" emptyMessage="Realize uma nova pesquisa" rows="10" paginator="true"
+				rowsPerPageTemplate="10 20 30 50" paginatorAlwaysVisible="false" paginatorPosition="top" 
+				reflow="true" 
+				rowStyleClass="#{pesqContaPagarBean.styleAtraso(item)}" 
+				resizableColumns="true">
+							
+				<f:facet name="header">
+					Contas a pagar cadastradas
+				</f:facet>
+				
+				<p:column headerText="Lançamento" style="text-align: center; width: 110px" sortBy="#{item.lancamento}">
+					<h:outputText value="#{item.lancamento}" >
+						<f:convertDateTime pattern="dd/MM/yy" />
+					</h:outputText>
+				</p:column>
+				<p:column headerText="Vencimento" style="text-align: center; width: 110px" sortBy="#{item.vencimento}">
+					<h:outputText value="#{item.vencimento}" >
+						<f:convertDateTime pattern="dd/MM/yy" />
+					</h:outputText>
+				</p:column>
+				<p:column headerText="Descrição" sortBy="#{item.descricao}">
+					<h:outputText value="#{item.descricao}" />
+				</p:column>
+				<p:column headerText="Tipo pagamento" style="text-align: center; width: 150px" sortBy="#{item.tipoPagamento.descricao}">
+					<h:outputText value="#{item.tipoPagamento.descricao}" />
+					<h:outputText value="#{pesqContaPagarBean.detalhePagamento(item)}"/>
+				</p:column>
+				<p:column headerText="Categoria" style="text-align: center; width: 150px" sortBy="#{item.categoria.descricao}">
+					<h:outputText value="#{item.categoria.descricao}" />
+				</p:column>
+				<p:column headerText="Parcela" style="width: 70px; text-align: center">
+					<h:outputText value="#{item.parcela}/#{item.parcelaTotal}" />
+				</p:column>
+				<p:column headerText="Valor" style="text-align: center; width: 100px" sortBy="#{item.valor}">
+					<h:outputText value="#{item.valor}">
+						<f:convertNumber type="currency" />
+					</h:outputText>
+				</p:column>
+				<p:column headerText="Status" style="text-align: center; width: 150px" sortBy="#{item.situacao.descricao}">
+					<h:outputText value="#{item.situacao.descricao}" />
+				</p:column>
+				<p:columnGroup type="footer" rendered="#{pesqContaPagarBean.mostrarTotal}">
+					<p:row>
+						<p:column colspan="6" style="text-align:right"
+							footerText="Valor total: " />
+							
+						<p:column colspan="2"
+							footerText="#{pesqContaPagarBean.valorTotal}"/>
+							
+					</p:row>
+					<p:row>
+						<p:column colspan="6" style="text-align:right"
+							footerText="Valor aberto: " />
+							
+						<p:column colspan="2"
+							footerText="#{pesqContaPagarBean.valorAberto}"/>
+							
+					</p:row>
+				</p:columnGroup>
+			</p:dataTable>
+		</p:panel>
+		
+		<p:confirmDialog header="Exclusão de despesa" message="Confirma a exclusão de todas informações referentes a esta conta?"
+	    		widgetVar="confirmacaoExclusao" >
+	    	<p:commandButton value="Sim" action="#{bean.excluir()}" partialSubmit="true" process="@this" 
+	    		oncomplete="PF('confirmacaoExclusao').hide();" icon="icon-button-ok" update="table"/>
+	    	<p:button value="Não" onclick="PF('confirmacaoExclusao').hide(); return false;" icon="icon-button-no"/>
+	    </p:confirmDialog>
+	</ui:define>
+</ui:composition>

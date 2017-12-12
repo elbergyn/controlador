@@ -1,0 +1,30 @@
+<ui:composition template="/WEB-INF/template/LayoutSegundario.html"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+	<ui:define name="title">Alterar senha</ui:define>
+	<ui:param name="bean" value="#{alterarSenhaBean}" />
+	
+	<ui:define name="corpo">	
+		<p:panel header="Recuperar senha de usuário" id="panelCadastro">		
+			<p:panelGrid columns="2" columnClasses="rotulo, campo" layout="grid">
+				<p:outputLabel for="email" value="E-mail" />
+				<p:inputText id="email" value="#{recuperarSenhaBean.email}" 
+					required="true"
+					title="Insira o e-mail para recuperação de senha"
+					requiredMessage="Informe o e-mail"
+					validator="emailValidation" 
+					size="40"/>
+			</p:panelGrid>
+			
+			<h:panelGrid columns="2" style="margin: 10px; position: relative;">
+				<p:commandButton id="enviar" value="Enviar" icon="icon-send" update="panelCadastro messageSimple"
+					action="#{recuperarSenhaBean.localizarUsuario()}"/>
+				<p:button value="Voltar" icon="icon-return" outcome="pretty:login" />
+			</h:panelGrid>
+		</p:panel>
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,37 @@
+<ui:composition template="/WEB-INF/template/LayoutPadrao.html"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+	<ui:define name="title">Dados Usuário</ui:define>
+	<ui:param name="bean" value="#{dadosUsuarioBean}" />
+
+	<ui:define name="corpo">
+		<p:panel header="Cadastro de usuário" id="panelCadastro">
+			<h:panelGrid columns="3" style="padding-bottom: 5px">
+				<p:commandButton value="Salvar" icon="icon-save"
+					action="#{dadosUsuarioBean.salvar()}"
+					update="panelCadastro messageSimple" />
+			</h:panelGrid>
+
+			<p:panelGrid columns="2" columnClasses="rotulo, campo" layout="grid"
+				styleClass="gridSimples">
+				<p:outputLabel value="Usuário" />
+				<p:inputText value="#{bean.usuario.descricao}" disabled="true"/>
+
+				<p:outputLabel for="celular" value="Celular" />
+				<p:inputMask id="celular" mask="(99) 9999-9999?9"
+					value="#{bean.usuario.celular}" />
+
+				<p:outputLabel for="email" value="E-mail" />
+				<p:inputText id="email" value="#{bean.usuario.email}"
+					required="true" requiredMessage="Informe o email"
+					title="Insira um e-mail para possivel recuperação de senha"
+					validator="emailValidation" size="40" />
+			</p:panelGrid>
+
+		</p:panel>
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,106 @@
+<ui:composition template="/WEB-INF/template/LayoutPadrao.html"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+	<ui:define name="title">Fechamento de caixas</ui:define>
+	<ui:param name="bean" value="#{pesqCaixaFechamentoBean}" />
+
+	<ui:define name="corpo">
+		<p:panel header="Filtrar históricos" id="panelFiltro">
+
+			<ui:include src="/WEB-INF/template/botoesPesquisa.xhtml" />
+
+			<p:panelGrid columns="2" columnClasses="rotulo, campo" layout="grid">
+
+				<p:outputLabel value="Data inicio" for="inicio" />
+				<p:calendar id="inicio"
+					value="#{pesqCaixaFechamentoBean.filtro.inicio}" effect="fade"
+					pattern="dd/MM/yyyy" locale="pt_BR" showButtonPanel="true"
+					navigator="true" />
+
+				<p:outputLabel value="Data final" for="fim" />
+				<p:calendar id="fim" value="#{pesqCaixaFechamentoBean.filtro.fim}"
+					effect="fade" pattern="dd/MM/yyyy" locale="pt_BR"
+					showButtonPanel="true" navigator="true" />
+
+			</p:panelGrid>
+		</p:panel>
+		<p:panel id="panelItens">
+			<p:dataGrid id="table" value="#{pesqCaixaFechamentoBean.caixas}" var="item"
+				style="margin-top: 5px; width: 99%"
+				emptyMessage="Nenhum fechamento localizado" 
+				rows="10" columns="4" layout="grid"
+				paginator="true" rowsPerPageTemplate="10 20 30" 
+				paginatorAlwaysVisible="false" paginatorPosition="top">
+
+				<f:facet name="header">
+					Consulta de caixas
+				</f:facet>
+
+				<p:panel header="Cód.: #{item.id}" >
+					<p:panelGrid columns="1" layout="grid" styleClass="sem_borda">
+						<p:column>
+							<h:outputLabel value="Data:" />
+							<h:outputText value="#{item.data}">
+								<f:convertDateTime pattern="dd/MM/yyyy" />
+							</h:outputText>
+						</p:column>
+
+						<p:column>
+							<h:outputLabel value="Total:" />
+							<h:outputText value="#{item.valorFinal}">
+								<f:convertNumber locale="pt_BR" type="currency" />
+							</h:outputText>
+						</p:column>
+					</p:panelGrid>
+					<p:panelGrid styleClass="text_center" columns="1">
+						<p:commandButton icon="icon-view" title="Detalhar" action="#{pesqCaixaFechamentoBean.carregarFechamento()}" 
+							oncomplete="PF('detalhe').show()" update="detalhe">
+							<f:setPropertyActionListener target="#{pesqCaixaFechamentoBean.caixa}" value="#{item}"/>
+						</p:commandButton>
+					</p:panelGrid>
+				</p:panel>
+			</p:dataGrid>
+		</p:panel>
+
+		<p:dialog header="Fechamento" showEffect="fade" hideEffect="slide" 
+			widgetVar="detalhe" id="detalhe" modal="true">
+			<h:panelGrid columns="1">
+				<h:outputText value="Cód. caixa: #{pesqCaixaFechamentoBean.caixa.id}"/>
+				<h:outputText value=" Data abertura: #{pesqCaixaFechamentoBean.caixa.data}"/>
+			</h:panelGrid>
+			
+			
+			<p:dataTable value="#{pesqCaixaFechamentoBean.fechamento}" var="item"
+				reflow="true" >
+				<f:facet name="header" >
+					Detalhes de lançamentos
+				</f:facet>
+				
+				<p:column headerText="Recebimento:">
+					<p:outputLabel value="#{item.recebimento.descricao}" />
+				</p:column>
+				
+				<p:column headerText="Valor:">
+					<p:outputLabel value="#{item.valor}">
+						<f:convertNumber type="currency" locale="pt_BR" />
+					</p:outputLabel>
+				</p:column>
+				
+				<p:columnGroup type="footer">
+					<p:row>
+						<p:column footerText="Fechamento:" />
+						<p:column footerText="#{pesqCaixaFechamentoBean.dataFechamento()}" />
+					</p:row>
+					<p:row>
+						<p:column footerText="Valor total:" />
+						<p:column footerText="#{pesqCaixaFechamentoBean.calcularTotal()}" />
+					</p:row>
+				</p:columnGroup>
+			</p:dataTable>
+		</p:dialog>
+	</ui:define>
+</ui:composition>

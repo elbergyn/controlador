@@ -1,0 +1,110 @@
+<ui:composition template="/WEB-INF/template/LayoutPadrao.html"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+	<ui:define name="title">Movimentos</ui:define>
+	<ui:param name="bean" value="#{pesqMovimentacaoBean}" />
+	
+	<ui:define name="corpo">
+		<p:panel header="Filtrar movimentos" id="panelFiltro">
+			
+			<ui:include src="/WEB-INF/template/botoesPesquisa.xhtml" />
+			
+			<p:panelGrid columns="4" columnClasses="rotulo, campo">
+						
+				<p:outputLabel value="Descrição" for="descricao" />
+				<p:inputText id="descricao" size="30" maxlength="30" 
+					value="#{pesqMovimentacaoBean.descricao}"/>
+					
+				<p:outputLabel value="Tipo lançamento" for="tipo" />
+				<p:selectOneMenu id="tipo" styleClass="ui-selectonemenu-normal"
+					value="#{pesqMovimentacaoBean.tipoMovimento}">
+					<f:selectItem itemLabel="Selecione o tipo" />
+					<f:selectItems value="#{pesqMovimentacaoBean.listarTipoMovimento()}" />
+				</p:selectOneMenu>
+							
+				<p:outputLabel value="Data inicio movimento" for="movimentoini" />
+				<p:calendar id="movimentoini"
+					value="#{pesqMovimentacaoBean.dataMovimentoIni}"
+					effect="fade"
+					pattern="dd/MM/yyyy"
+					locale="pt_BR"
+					showButtonPanel="true"
+					navigator="true"/>
+					
+				<p:outputLabel value="Data final movimento" for="movimentofim" />
+				<p:calendar id="movimentofim" 
+					value="#{pesqMovimentacaoBean.dataMovimentoFim}"
+					effect="fade"
+					pattern="dd/MM/yyyy"
+					locale="pt_BR"
+					showButtonPanel="true"
+					navigator="true"/>
+				
+			</p:panelGrid>
+		</p:panel>
+		<p:panel id="panelItens" >
+			<p:dataTable id="table" value="#{pesqMovimentacaoBean.movimentos}" var="item"
+				style="margin-top: 5px; width: 99%" reflow="true"
+				emptyMessage="Nenhum movimento encontrado" rows="10"
+				paginator="true" rowsPerPageTemplate="10 20 30"
+				paginatorAlwaysVisible="false" paginatorPosition="top">
+
+				<f:facet name="header">
+					Movimentos realizados
+				</f:facet>
+
+				<p:column headerText="Data" sortBy="#{item.dataLancamento}"
+					style="width: 100px; text-align: center">
+					<h:outputText value="#{item.dataLancamento}">
+						<f:convertDateTime locale="pt_BR" pattern="dd/MM/yy HH:mm"/>
+					</h:outputText>
+				</p:column>
+				<p:column headerText="Descrição" sortBy="#{item.descricao}">
+					<h:outputText value="#{item.descricao}" />
+				</p:column>
+				<p:column headerText="Valor" sortBy="#{item.valor}"
+					style="width: 125px; text-align: center">
+					<h:outputText value="#{item.valor}">
+						<f:convertNumber locale="pt_BR" 
+							type="currency" />
+					</h:outputText>
+				</p:column>
+				<p:column headerText="Lançamento" sortBy="#{item.tipoMovimento.descricao}"
+					style="width: 120px; text-align: center">
+					<h:outputText value="#{item.tipoMovimento.descricao}" />
+				</p:column>
+
+				<p:columnGroup type="footer">
+					<p:row>
+						<p:column colspan="3" style="text-align:right"
+							footerText="Total créditos: " />
+							
+						<p:column styleClass="credito"
+							footerText="#{pesqMovimentacaoBean.saldo.Crédito}"/>
+					</p:row>
+
+					<p:row>
+						<p:column colspan="3" style="text-align:right;"
+							footerText="Total débitos: " />
+						<p:column styleClass="debito"
+							footerText="#{pesqMovimentacaoBean.saldo.Débito}" />
+					</p:row>
+
+					<p:row>
+						<p:column colspan="3" style="text-align:right"
+							footerText="Saldo: " />
+						<p:column style="text-align:center; color: green" id="total" 
+							footerText="#{pesqMovimentacaoBean.saldo.total}" 
+							styleClass="#{pesqMovimentacaoBean.saldo.valorTotal > 0 ? 'credito' : 'debito'}"/>
+					</p:row>
+				</p:columnGroup>
+			</p:dataTable>
+		</p:panel>
+		
+		
+	</ui:define>
+</ui:composition>

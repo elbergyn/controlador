@@ -1,0 +1,273 @@
+<ui:composition template="/WEB-INF/template/LayoutPadrao.html"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+	<ui:define name="title">Contas a receber</ui:define>
+	<ui:param name="bean" value="#{cadastroContaReceberBean}" />
+
+	<ui:define name="corpo">
+	
+		<p:panel header="Contas a receber" id="panelCadastro">
+			<ui:include src="/WEB-INF/template/botoesCadastro.xhtml" />
+
+			<p:panelGrid columns="4" columnClasses="rotulo, campo, rotulo, campo" layout="grid">
+				<p:outputLabel value="Lançamento" for="lancamento" />
+					
+				<p:calendar id="lancamento" label="Data lançamento" required="true"
+					requiredMessage="Informe a data de lançamento" effect="fade"
+					pattern="dd/MM/yyyy" locale="pt_BR" showButtonPanel="true"
+					navigator="true"
+					value="#{cadastroContaReceberBean.conta.dataLancamento}" />
+
+				<p:outputLabel value="Descrição" for="descricao" />
+				<p:inputText id="descricao" size="40" maxlength="50" required="true"
+					requiredMessage="Informe a descrição"
+					value="#{cadastroContaReceberBean.conta.descricao}" />
+				
+				<p:outputLabel value="Tipo recebimento" for="recebimento" />
+				<p:selectOneMenu id="recebimento" required="true"
+					requiredMessage="Informe o tipo de recebimento"
+					value="#{cadastroContaReceberBean.conta.tipoRecebimento}">
+					<f:selectItem itemLabel="Selecione tipo" />
+					<f:selectItems
+						value="#{cadastroContaReceberBean.listarTiposRecebimentos()}" />
+					<p:ajax event="change" update="panelCheque" />
+				</p:selectOneMenu>
+				
+				<p:outputLabel for="parc_total" value="Parcelas"/>
+				<p:spinner min="1" max="48" id="parc_total" size="4"
+					required="true" requiredMessage="Informe o total de parcelas" 
+					value="#{cadastroContaReceberBean.conta.parcelaTotal}">
+					
+					<p:ajax event="change" process="@this, parc_total"
+					update="vparcela, total, btnParcelamento" listener="#{cadastroContaReceberBean.calcularValores()}"/>
+				</p:spinner>
+
+				<p:outputLabel value="Valor total" for="total" />
+				<p:column>
+					<p:inputText id="total" required="true" styleClass="moeda" onfocus="configurarMoeda();" 
+						converter="moedaConverter"
+						requiredMessage="Informe ou calcule o valor total"
+						value="#{cadastroContaReceberBean.conta.valorTotal}"
+						validator="maiorZeroValidation"/>
+					
+					<p:commandButton icon="icon-calc" title="Calcular parcelas"  
+						partialSubmit="true"
+						process="@this, total"
+						actionListener="#{cadastroContaReceberBean.calcularValorParcela()}" 
+						update="vparcela"/>
+				</p:column>
+					
+				<p:outputLabel value="Valor parcela" for="vparcela" />
+				<p:column>
+					<div style="display: inherit; width: 100%">
+						<p:inputText id="vparcela"  styleClass="moeda" onfocus="configurarMoeda();" 
+							converter="moedaConverter"  required="true"
+							requiredMessage="Informe o valor da parcela"
+							value="#{cadastroContaReceberBean.valorParcela}"
+							validator="maiorZeroValidation"/>
+				
+						<p:commandButton icon="icon-calc" title="Calcular Total"  
+							actionListener="#{cadastroContaReceberBean.calcularValorTotal()}" 
+							partialSubmit="true"
+							process="@this, vparcela"
+							update="total" />
+					</div>
+				</p:column>
+		
+				<p:outputLabel for="perPag" value="Período pagamento" />
+				<p:selectOneMenu id="perPag" value="#{cadastroContaReceberBean.conta.periodoPagamento}"
+					required="true">
+					<f:selectItems value="#{cadastroContaReceberBean.conta.periodoPagamentoSelectItem}" 
+						var="item" itemValue="#{item}" itemLabel="#{item.periodo}"/>
+					<p:ajax event="change" process="@this" listener="#{cadastroContaReceberBean.realizarNovoParcelamento()}"/>
+				</p:selectOneMenu>
+				
+				<p:outputLabel value="Vencimento" for="vencimento" />
+				<p:column>
+					<div style="display: inherit; width: 100%">
+						<p:calendar id="vencimento"  
+							required="true" requiredMessage="Informe a data de vencimento" 
+							value="#{cadastroContaReceberBean.conta.vencimento}"
+							effect="fade" 
+							pattern="dd/MM/yyyy"
+							locale="pt_BR"
+							showButtonPanel="true"
+							navigator="true" >
+								<p:ajax event="dateSelect" process="@this, vencimento, vparcela, parc_total, total" 
+									update="btnParcelamento" 
+									listener="#{cadastroContaReceberBean.verificarDesabilitarParcelamento()}"/>	
+						</p:calendar>
+						
+						<p:commandButton id="btnParcelamento" icon="icon-view" onclick="PF('dialogParc').show()" 
+							actionListener="#{cadastroContaReceberBean.gerarParcelamento()}"
+							process="@this" update="tabParc, total"
+							disabled="#{cadastroContaReceberBean.desabilitarParcelamento}"
+							title="Visualizar/alterar vencimentos"/>
+					</div>
+				</p:column>
+				
+				<p:outputLabel value="Devedor" for="devedor" />
+				<p:column >
+					<div style="display: flex !important;">
+						<p:autoComplete id="devedor"
+							value="#{cadastroContaReceberBean.conta.devedor}" dropdown="true"
+							completeMethod="#{cadastroContaReceberBean.listarDevedores}"
+							var="item" itemLabel="#{item.descricao}" itemValue="#{item}"
+							size="30" styleClass="ui-autocomplete-alt" required="true"
+							requiredMessage="Informe o devedor" />
+						
+						<p:commandButton icon="icon-button-add" style="left: 5px;"
+							onclick="PF('dlgCadDevedor').show();" 
+							actionListener="#{cadastroDevedorBean.requererDescricao()}"
+							partialSubmit="true"
+							process="@this" title="Cadastrar novo devedor" update="infDevedor">
+								<p:ajax event="click" listener="#{cadastroDevedorBean.requererDescricao()}"/>
+						</p:commandButton>
+					</div>
+				</p:column>
+				<p:column/><p:column/>
+			</p:panelGrid>
+
+			<p:panel id="panelCheque" header="Número(s) de cheque(s)"
+				visible="#{cadastroContaReceberBean.mostrarPanelCheques}">
+				<ui:include src="/WEB-INF/component/contaReceberCheque.xhtml" />
+			</p:panel>
+		</p:panel>
+
+		<p:panel styleClass="sem-fundo">
+			<p:dataTable id="table" value="#{bean.listarContas()}" var="item"
+				style="margin-top: 5px; width: 99,5%"
+				emptyMessage="Nenhuma conta a receber cadastrada" rows="10"
+				paginator="true" rowsPerPageTemplate="10 20 30"
+				paginatorAlwaysVisible="false" paginatorPosition="top" reflow="true"
+				resizableColumns="true"
+				rowStyleClass="#{cadastroContaReceberBean.styleAtraso(item)}" >
+
+				<f:facet name="header">
+					Contas a receber
+				</f:facet>
+
+				<p:column headerText="Vencimento"
+					style="width: 120px; text-align: center"
+					sortBy="#{item.vencimento}">
+					<h:outputText value="#{item.vencimento}">
+						<f:convertDateTime pattern="dd/MM/yyyy" />
+					</h:outputText>
+				</p:column>
+				<p:column headerText="Descrição" sortBy="#{item.descricao}">
+					<h:outputText value="#{item.descricao}" />
+				</p:column>
+
+				<p:column headerText="Devedor" sortBy="#{item.devedor.descricao}" >
+					<h:outputText value="#{item.devedor.descricao}" />
+				</p:column>
+
+				<p:column headerText="Parcelas" sortBy="#{item.parcelaTotal}"
+					style="text-align: center">
+					<h:outputText value="#{item.parcelaTotal}" />
+				</p:column>
+				<p:column headerText="Valor total" sortBy="#{item.valorTotal}"
+					style="text-align: center">
+					<h:outputText value="#{item.valorTotal}">
+						<f:convertNumber type="currency" />
+					</h:outputText>
+				</p:column>
+
+				<p:column headerText="Tipo Recebimento"
+					sortBy="#{item.tipoRecebimento.descricao}"
+					style="text-align: center">
+					<h:outputText value="#{item.tipoRecebimento.descricao}" />
+				</p:column>
+
+				<p:column headerText="Situação" sortBy="#{item.situacao.descricao}"
+					style="width: 130px; text-align: center">
+					<h:outputText value="#{item.situacao.descricao}" />
+				</p:column>
+
+				<p:column style="text-align: center; width: 90px;">
+					<p:commandButton icon="icon-edit" title="Editar" process="@this"
+						disabled="#{cadastroContaReceberBean.permitidoAlterar(item)}"
+						partialSubmit="true" update="panelCadastro"
+						action="#{cadastroContaReceberBean.popularOpcoesPagamento()}">
+						<f:setPropertyActionListener target="#{bean.conta}"
+							value="#{item}" />
+					</p:commandButton>
+					<p:commandButton icon="icon-delete" title="Excluir" process="@this"
+						partialSubmit="true" oncomplete="PF('confirmacaoExclusao').show()"
+						disabled="#{cadastroContaReceberBean.permitidoAlterar(item)}">
+						<f:setPropertyActionListener target="#{bean.conta}"
+							value="#{item}" />
+					</p:commandButton>
+				</p:column>
+			</p:dataTable>
+		</p:panel>
+		
+		<p:dialog header="Parcelas"
+	    	widgetVar="dialogParc" 
+	    	showEffect="highlight" hideEffect="fold"
+	    	modal="true" width="400px">
+	    	<p:outputLabel value="Clique sobre o vencimento para alterá-lo" />
+	    	<p:dataTable id="tabParc" var="item" value="#{cadastroContaReceberBean.conta.valorParcelas}"
+	    		scrollable="true" scrollHeight="150" rowHover="true" editMode="cell"
+	    		rowKey="#{item.id}" editable="true">
+	    		<p:ajax event="cellEdit"
+					listener="#{cadastroContaReceberBean.onCellEdit}"
+					process="tabParc" partialSubmit="true" />
+				<p:column headerText="Parc" style="width: 20px !important">
+					<p:outputLabel value="#{item.numero}"/>
+				</p:column>
+				<p:column headerText="Valor" style="width: 60px !important">
+					<p:outputLabel value="#{item.valor.bigDecimal}">
+						<f:convertNumber type="currency" />
+					</p:outputLabel>
+				</p:column>
+				<p:column headerText="Vencimento" style="width: 50px !important">
+					<p:cellEditor>
+						<f:facet name="output">
+							<p:outputLabel value="#{item.vencimento}" 
+								title="Clique para alterar a data de vencimento">
+								<f:convertDateTime locale="pt_BR" />
+							</p:outputLabel>
+						</f:facet>
+						<f:facet name="input">
+							<p:calendar  
+								value="#{item.vencimento}"
+								effect="fade" 
+								pattern="dd/MM/yyyy"
+								locale="pt_BR"
+								showButtonPanel="true"
+								navigator="true" />	
+						</f:facet>
+					</p:cellEditor>
+				</p:column>
+			</p:dataTable>
+			<div style="width: 100%; text-align: center">
+				<p:commandButton type="button" value="Ok" icon="icon-button-ok" onclick="PF('dialogParc').hide();"/>
+			</div>
+	    </p:dialog>
+
+		<p:confirmDialog header="Excluir conta"
+			message="Tem certeza que deseja excluir esta conta a receber?"
+			widgetVar="confirmacaoExclusao" >
+			<p:commandButton value="Sim" action="#{bean.excluir()}"
+				partialSubmit="true" process="@this"
+				oncomplete="PF('confirmacaoExclusao').hide();" icon="icon-button-ok"
+				update="table" />
+			<p:button value="Não"
+				onclick="PF('confirmacaoExclusao').hide(); return false;"
+				icon="icon-button-no" />
+		</p:confirmDialog>
+
+		<p:dialog header="Inclusão de devedor" widgetVar="dlgCadDevedor"
+			modal="true" resizable="false" fitViewport="true" width="470px">
+			<ui:include src="/WEB-INF/component/dialogCadastroDevedor.xhtml" />
+			<p:ajax event="close" listener="#{cadastroContaReceberBean.atualizarDevedores()}" update="devedor" />
+			<p:ajax event="close" listener="#{cadastroDevedorBean.anularDescricao()}" update="infDevedor" />
+		</p:dialog>
+
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,152 @@
+<ui:composition template="/WEB-INF/template/LayoutPadrao.html"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+	<ui:define name="title">Pesquisa de cheques emitidos</ui:define>
+	
+	<ui:define name="corpo">
+		<ui:param name="bean" value="#{pesqChequeEmitidoBean}" />
+		
+		<p:panel header="Filtro para cheques emitidos" id="panelFiltro">
+			<ui:include src="/WEB-INF/template/botoesPesquisa.xhtml" />
+			
+			<p:panelGrid columns="4" columnClasses="rotulo, campo, rotulo, campo" >
+				<p:outputLabel for="cheque" value="Cheque"/>
+				<p:selectOneMenu id="cheque"
+					value="#{pesqChequeEmitidoBean.cheque}"
+					styleClass="ui-selectonemenu-normal">
+					<f:selectItem itemLabel="Selecione o cheque" />
+					<f:selectItems value="#{pesqChequeEmitidoBean.cheques}" var="item" 
+						itemLabel="#{item.descricao}" itemValue="#{item}" />
+				</p:selectOneMenu>
+				
+				<p:outputLabel value="Descrição" for="descricao" />
+				<p:inputText id="descricao" size="50" maxlength="50"  
+					requiredMessage="Informe a descrição"
+					value="#{pesqChequeEmitidoBean.descricao}"/>
+				
+				<p:outputLabel value="Data inicio emissão" for="emissaoini" />
+				<p:calendar id="emissaoini"  
+					value="#{pesqChequeEmitidoBean.dataEmissaoIni}"
+					effect="fade" 
+					maxdate="#{cadastroEmissaoChequeBean.dataAtual}"
+					pattern="dd/MM/yyyy"
+					locale="pt_BR"
+					showButtonPanel="true"
+					navigator="true"/>
+					
+				<p:outputLabel value="Data final emissão" for="emissaofim" />
+				<p:calendar id="emissaofim"
+					value="#{pesqChequeEmitidoBean.dataEmissaoFim}"
+					effect="fade" 
+					maxdate="#{cadastroEmissaoChequeBean.dataAtual}"
+					pattern="dd/MM/yyyy"
+					locale="pt_BR"
+					showButtonPanel="true"
+					navigator="true"/>
+				
+				<p:outputLabel value="Data inicio vencimento" for="vencimentoini" />
+				<p:calendar id="vencimentoini"
+					value="#{pesqChequeEmitidoBean.dataVencimentoIni}"
+					effect="fade"
+					pattern="dd/MM/yyyy"
+					locale="pt_BR"
+					showButtonPanel="true"
+					navigator="true"/>
+					
+				<p:outputLabel value="Data final vencimento" for="vencimentofim" />
+				<p:calendar id="vencimentofim" 
+					value="#{pesqChequeEmitidoBean.dataVencimentoFim}"
+					effect="fade"
+					pattern="dd/MM/yyyy"
+					locale="pt_BR"
+					showButtonPanel="true"
+					navigator="true"/>
+					
+				<p:outputLabel for="categoria" value="Categoria" />
+				<p:selectOneMenu id="categoria" 
+					value="#{pesqChequeEmitidoBean.categoria}" >
+					<f:selectItem itemLabel="Selecione status" />
+					<f:selectItems value="#{pesqChequeEmitidoBean.listarCategorias()}" var="cat" 
+					itemLabel="#{cat.descricao}" itemValue="#{cat}" />
+				</p:selectOneMenu>
+					
+				<p:outputLabel for="statusPag" value="Status" />
+				<p:selectOneMenu id="statusPag" styleClass="ui-selectonemenu-normal"
+					value="#{pesqChequeEmitidoBean.situacao}">
+					<f:selectItem itemLabel="Selecione status" />
+					<f:selectItems value="#{pesqChequeEmitidoBean.listarSituacaoPagamentos()}" var="status" 
+					itemLabel="#{status.descricao}" itemValue="#{status}"/>
+				</p:selectOneMenu>
+
+			</p:panelGrid>
+		</p:panel>
+		
+		<p:panel id="panelItens">
+			<p:dataTable id="table" value="#{pesqChequeEmitidoBean.chequesEmitidos}" var="item"
+				style="margin-top: 5px; width: 99,5%" emptyMessage="Realize uma nova pesquisa" rows="10" paginator="true"
+				rowsPerPageTemplate="10 20 30" paginatorAlwaysVisible="false" paginatorPosition="top" reflow="true"
+				resizableColumns="true" 
+				rowStyleClass="#{pesqChequeEmitidoBean.styleAtraso(item)}">
+							
+				<f:facet name="header">
+					Cheques Emitidos
+				</f:facet>
+				
+				<p:column headerText="Emissão" style="text-align: center; width: 80px" sortBy="#{item.lancamento}">
+					<h:outputText value="#{item.lancamento}">
+						<f:convertDateTime pattern="dd/MM/yyyy" />
+					</h:outputText>
+				</p:column>
+				<p:column headerText="Descrição" sortBy="#{item.descricao}" >
+					<h:outputText value="#{item.descricao}" />
+				</p:column>
+				<p:column headerText="Cheque" sortBy="#{item.emitirCheque.cheque.descricao}">
+					<h:outputText value="#{item.emitirCheque.cheque.descricao}" />
+				</p:column>
+				<p:column headerText="Vencimento" style="text-align: center;" sortBy="#{item.vencimento}">
+					<h:outputText value="#{item.vencimento}">
+						<f:convertDateTime pattern="dd/MM/yyyy" />
+					</h:outputText>
+				</p:column>
+				<p:column headerText="Valor Total" style="text-align: center;" sortBy="#{item.valor}">
+					<h:outputText value="#{item.valor}">
+						<f:convertNumber type="currency" />
+					</h:outputText>
+				</p:column>
+				<p:column headerText="Status" style="text-align: center; width: 120px" sortBy="#{item.situacao.descricao}">
+					<h:outputText value="#{item.situacao.descricao}" />
+				</p:column>
+				<p:columnGroup type="footer" rendered="#{pesqChequeEmitidoBean.mostrarTotal}">
+					<p:row>
+						<p:column colspan="4" style="text-align:right"
+							footerText="Valor total: " />
+							
+						<p:column colspan="2"
+							footerText="#{pesqChequeEmitidoBean.valorTotal}"/>
+							
+					</p:row>
+					<p:row>
+						<p:column colspan="4" style="text-align:right"
+							footerText="Valor aberto: " />
+							
+						<p:column colspan="2"
+							footerText="#{pesqChequeEmitidoBean.valorAberto}"/>
+							
+					</p:row>
+				</p:columnGroup>
+			</p:dataTable>
+			
+		</p:panel>
+		
+		<p:confirmDialog header="Exclusão de emissão de cheque" message="Tem certeza que deseja excluir o emissão de cheque?"
+	    		widgetVar="confirmacaoExclusao" >
+	    	<p:commandButton value="Sim" action="#{bean.excluir()}" partialSubmit="true" process="@this" 
+	    		oncomplete="PF('confirmacaoExclusao').hide();" icon="icon-button-ok" update="table"/>
+	    	<p:button value="Não" onclick="PF('confirmacaoExclusao').hide(); return false;" icon="icon-button-no"/>
+	    </p:confirmDialog>
+	</ui:define>
+</ui:composition>

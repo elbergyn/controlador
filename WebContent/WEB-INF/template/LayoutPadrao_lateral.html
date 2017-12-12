@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<meta http-equiv="refresh"
+		content="#{session.maxInactiveInterval},url=../" />
+	<title><ui:insert name="title">Sistema de Controle Gerencial</ui:insert>
+	</title>
+	<h:outputStylesheet library="css" name="layout_principal.css" />
+	<h:outputStylesheet library="css" name="component_principal.css" />
+	<h:outputStylesheet library="css" name="icon.css" />
+	<h:outputStylesheet library="css" name="style.css" />
+	
+	<h:outputScript name="jquery.maskmoney.js" library="js"/>
+	<h:outputScript name="calendar_portugues.js" library="js" />
+	<h:outputScript name="funcoes.js" library="js" />
+	<script>
+		function configurarMoeda(){
+			$(".moeda").maskMoney({decimal: ",", thousands: ".", allowZero: true, prefix: "R$ "});
+		}
+
+		$(document).ready(
+			function(){
+				configurarMoeda();
+			}
+		);
+	</script>
+</h:head>
+
+<h:body id="body" styleClass="ui-widget-content sem_borda">
+	<ui:include src="/WEB-INF/template/loading.xhtml" />
+	<!-- <p:panel styleClass="container"> -->
+		<header>
+			<div style="float: left;">
+				<h:link outcome="pretty:home">
+					<h:graphicImage library="images" name="logo.png" width="50px"
+						height="50px" styleClass="img" />
+					<h:outputText styleClass="titulo" value="Sistema Controlar" />
+					<h:outputText styleClass="slogan" value="Controlador Financeiro" />
+				</h:link>
+				<p:outputLabel value="#{loginBean.nomeUsuarioLogado}" styleClass="usuario" />		
+			</div>
+			<div id="menu_principal" >
+				<ui:include src="/WEB-INF/template/menuPrincipal.xhtml"/>
+			</div>
+			<div id="menu_reduzido" >
+				<ui:include src="/WEB-INF/template/menuReduzido.xhtml"/>
+			</div>
+		</header>
+		<content>
+			<h:form id="form" prependId="false">
+				<p:layout  fullPage="true" >
+					<p:growl autoUpdate="true" showSummary="false" showDetail="true" id="messageSimple"/>
+					<p:layoutUnit position="west" size="200" collapsible="true" closable="true" collapseSize="10" gutter="0">
+						<ui:include src="/WEB-INF/template/menuLateral.xhtml" />
+					</p:layoutUnit>
+					
+					<p:layoutUnit position="center" style="width: 100%; position: relative" gutter="0">
+						<ui:insert name="corpo" />
+					</p:layoutUnit>
+				</p:layout>
+			</h:form>
+		</content>
+		<footer>
+			<p:separator styleClass="footer-lin" />
+			<span class="empresa">Empresa</span>
+			<span class="copy">Direitos reservados @</span>
+			<span class="site"><a href="http://www.inforgyn.net" target="_blank">Inforgyn.net</a></span>
+		</footer>
+	<!-- </p:panel> -->
+</h:body>
+</html>

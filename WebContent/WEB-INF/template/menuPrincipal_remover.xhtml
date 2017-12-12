@@ -1,0 +1,48 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+	<!-- <h:outputStylesheet library="css" name="menu_principal.css" /> -->
+	<h:outputStylesheet library="css" name="menu_principal_tab.css" />
+
+	<div class="menu_principal">
+		<h:form style="display: inline-block">	
+			<p:tabView styleClass="remover_borda" orientation="top"
+				activeIndex="#{menuBean.index}" id="tabMenu" dynamic="true">
+				<p:ajax event="tabChange" listener="#{menuBean.onChange}"
+					update="tabMenu" />
+
+				<p:tab title="Gerência de Vendas" rendered="#{menuBean.usuarioAdm}">
+					<p:menubar styleClass="remover_borda">
+						<ui:include src="/WEB-INF/template/itensMenuVendas.xhtml" />
+					</p:menubar>
+				</p:tab>
+				<p:tab title="Controle Financeiro">
+					<p:menubar styleClass="remover_borda">
+						<ui:include src="/WEB-INF/template/itensMenuFinanceiro.xhtml" />
+					</p:menubar>
+				</p:tab>
+				<p:tab title="Configuração">
+					<p:menubar styleClass="remover_borda">
+						<p:menuitem value="Alterar senha" outcome="pretty:alterarSenha" />
+						<p:menuitem value="Dados usuário" outcome="pretty:dadosUsuario" />
+						<p:menuitem value="Tema" outcome="pretty:tema" />
+						<p:menuitem value="Sair " outcome="pretty:login" styleClass="sair"
+							icon="icon-button-no" />
+					</p:menubar>
+				</p:tab>
+				<p:tab title="Admin">
+					<p:menubar styleClass="remover_borda">
+						<p:menuitem value="Usuário" outcome="pretty:cadUsuario" />
+						<p:menuitem value="Log de erro" outcome="pretty:logErro" />
+						<p:menuitem value="Sair " outcome="pretty:login" styleClass="sair"
+							icon="icon-button-no" />
+					</p:menubar>
+				</p:tab>
+			</p:tabView>
+		</h:form>
+	</div>
+	<div style="clear: both"></div>
+</ui:composition>

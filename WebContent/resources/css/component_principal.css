@@ -1,0 +1,113 @@
+@CHARSET "UTF-8";
+
+.centralizar-selectonemenu{
+	vertical-align: middle;
+}
+
+.datalist-sem-borda .ui-datalist-content{
+	border: none;
+	padding: 0;
+}
+
+.data_list_sem_fundo .ui-datalist-content{
+	background: none !important;
+}
+
+/**Correção de quebra de linha em colunas**/
+.ui-datatable-resizable thead th, .ui-datatable-resizable tbody td, .ui-datatable-resizable tfoot td{
+	white-space: normal !important;
+}
+
+.ui-dialog{
+	max-width: 60% !important;
+}
+
+.ui-editable-column{
+	opacity:0.5 !important;
+	-moz-opacity: 0.5 !important;
+	filter: alpha(opacity=5) !important;
+	font-weight: bold !important;
+}
+
+.ui-messages{
+    font-size: 0.95em !important;
+    font-weight: bold !important;
+    font-family: serif, arial, sans-serif !important;
+}
+
+.ui-widget{
+	font-size: 0.95em !important;
+	/* font-size: 14px; */
+	font-family: arial, sans-serif;
+}
+.ui-tabs{
+	/* font-size: 0.8em !important; */
+}
+
+.ui-fieldset{
+	background: none !important;
+}
+
+.ui-panelgrid-cell label{
+	margin-left: 10px;
+	margin-right: 5px;
+}
+
+.ui-selectmanycheckbox td {
+	border-width: 0px !important;
+	padding: 0px !important;
+}
+
+.ui-selectmanycheckbox td label {
+	padding-right: 10px;
+	margin-top: 0px;
+}
+
+/* Customiza TabView - início */
+.ui-tabs {
+    padding: 0px !important;
+}
+
+.ui-panel-content{
+	padding: 0px !important;
+}
+
+.ui-font-size-1{
+	font-size: 1em !important;
+}
+
+.ui-tabs .ui-tabs-panel {
+    padding: 0.5em 0.2em !important;
+}
+
+.ui-tabs .ui-grid{
+    border: 0px !important;
+    font-size: 1em !important;
+}
+
+.ui-tabs .ui-tabs-nav {
+    margin: -1px !important;
+}
+
+.ui-tabs.ui-tabs-top > .ui-tabs-nav {
+    padding: 0px !important;
+}
+
+/*Corrigir posição de seta do menu de selectOneMenu*/
+.ui-selectonemenu .ui-selectonemenu-trigger{
+	/*right: -22px !important;*/
+}
+
+.ui-selectonemenu-normal .ui-selectonemenu-trigger{
+	right: -1px !important;
+}
+
+/*Corrigir posição de seta do autocomplete*/
+.ui-autocomplete-alt .ui-autocomplete-dropdown{
+	    right: -1px !important;
+}
+
+.ui-selectonemenu-label{
+	margin-left: 0 !important;
+	width: 94% !important;
+}

@@ -1,0 +1,107 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+	<p:dataTable id="tableDesp" var="item"
+		value="#{importarDespesaMensalBean.despesas}" editable="true"
+		editMode="cell" reflow="true" style="margin-top: 5px; width: 99,5%"
+		emptyMessage="Nenhuma despesa mensal cadastrada" rows="10"
+		paginator="true" rowsPerPageTemplate="10 20 30"
+		paginatorAlwaysVisible="false" paginatorPosition="top"
+		rowKey="#{item.id}" liveScroll="true"
+		selection="#{importarDespesaMensalBean.despesasSelecionadas}"
+		resizableColumns="true" >
+
+		<p:column selectionMode="multiple"
+			style="width:16px;text-align:center" />
+		<p:ajax event="cellEdit"
+			listener="#{importarDespesaMensalBean.onCellEdit}"
+			process="tableDesp" partialSubmit="true" />
+		<p:ajax event="toggleSelect"
+			listener="#{importarDespesaMensalBean.rowToggleSelect}"
+			update="btnImp" process="tableDesp" partialSubmit="true" />
+		<p:ajax event="rowSelectCheckbox"
+			listener="#{importarDespesaMensalBean.checked}" update="btnImp"
+			process="tableDesp" partialSubmit="true" />
+		<p:ajax event="rowUnselectCheckbox"
+			listener="#{importarDespesaMensalBean.unChecked}" update="btnImp"
+			process="tableDesp" partialSubmit="true" />
+		<p:ajax event="rowSelect"
+			listener="#{importarDespesaMensalBean.checked}" update="btnImp"
+			process="tableDesp" partialSubmit="true" />
+
+		<f:facet name="header">
+			<p:outputLabel value="Gerar contas mensais para" for="mes" />
+			<p:selectOneMenu id="mes" styleClass="centralizar-selectonemenu"
+				value="#{importarDespesaMensalBean.mes}">
+				<f:selectItems value="#{importarDespesaMensalBean.meses()}" />
+			</p:selectOneMenu>
+
+			<p:spacer width="30px" />
+
+			<p:outputLabel value="de " for="ano" />
+			<p:selectOneMenu id="ano" value="#{importarDespesaMensalBean.ano}"
+				styleClass="centralizar-selectonemenu">
+				<f:selectItems value="#{importarDespesaMensalBean.anosSelect()}" />
+			</p:selectOneMenu>
+		</f:facet>
+
+		<p:column headerText="Descrição">
+			<h:outputText value="#{item.descricao}" />
+		</p:column>
+
+		<p:column headerText="Dia do vencimento" style="width: 120px">
+			<p:cellEditor>
+				<f:facet name="output">
+					<h:outputText value="#{item.diaVencimento}"
+						title="Clique no valor para alterá-lo">
+					</h:outputText>
+				</f:facet>
+				<f:facet name="input">
+					<p:spinner id="diaVencimento" required="true"
+						requiredMessage="Informe o dia de vencimento"
+						value="#{item.diaVencimento}" min="1" max="31" size="5">
+						<f:validateLongRange minimum="1" maximum="31" />
+					</p:spinner>
+				</f:facet>
+			</p:cellEditor>
+		</p:column>
+
+		<p:column headerText="Valor a Pagar" style="width: 120px">
+			<p:cellEditor>
+				<f:facet name="output">
+					<h:outputText value="#{item.valor}"
+						title="Clique no valor para alterá-lo">
+						<f:convertNumber type="currency" />
+					</h:outputText>
+				</f:facet>
+				<f:facet name="input">
+					<p:inputText value="#{item.valor}" style="width:96%"
+						styleClass="moeda" onfocus="configurarMoeda();"
+						converter="moedaConverter" />
+				</f:facet>
+			</p:cellEditor>
+		</p:column>
+
+		<f:facet name="footer">
+			<p:commandButton icon="icon-money" value="Importar" id="btnImp"
+				oncomplete="PF('confirmacaoDialog').show()" partialSubmit="true"
+				process=":form:table"
+				disabled="#{importarDespesaMensalBean.importarContas}" />
+		</f:facet>
+	</p:dataTable>
+
+	<p:confirmDialog header="Realizar pagamento"
+		message="Importar itens selecionados?" widgetVar="confirmacaoDialog"
+		showEffect="fade" hideEffect="fade" appendTo="form">
+		<p:commandButton value="Sim"
+			oncomplete="PF('confirmacaoDialog').hide(); PF('dialogImport').hide();"
+			icon="icon-button-ok" partialSubmit="true" process="tableDesp, @this"
+			action="#{importarDespesaMensalBean.gerarContas()}" />
+		<p:button value="Não"
+			onclick="PF('confirmacaoDialog').hide(); return false;"
+			icon="icon-button-no" />
+	</p:confirmDialog>
+</ui:composition>

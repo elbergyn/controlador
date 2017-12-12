@@ -1,0 +1,37 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+	<!-- <p:ajaxStatus>
+		<f:facet name="error">
+			<h:outputText value="Error" />
+		</f:facet>
+		<f:facet name="success">
+		<h:outputText value="Success" />
+	</f:facet>
+		<f:facet name="start">
+			<p:graphicImage library="images" />
+			<p:dialog header="Processando" />
+		</f:facet>
+		<f:facet name="complete">
+			<h:outputText value="Done" />
+		</f:facet>
+	</p:ajaxStatus> -->
+
+	<p:ajaxStatus onstart="PF('status').show()"	oncomplete="PF('status').hide()" onsuccess="PF('status').hide()"/>
+	
+	<p:dialog widgetVar="status" modal="true" closable="false" header="Aguade..." resizable="false">
+		<p:graphicImage library="images" name="loading56.gif" width="100em" height="100em" />
+		<!-- <p:graphicImage library="images" name="loading.gif" width="100em" height="100em" /> -->
+	</p:dialog>
+	
+	<!-- <p:dialog widgetVar="status" modal="true" header="Erro..." resizable="false">
+		<h:panelGrid columns="2">
+			<p:graphicImage library="images/16" name="button_no.png" width="40em" height="40em" />
+			<p:outputLabel value="Ocorreu erro ao realizar o processo, tente novamente" />
+		</h:panelGrid>
+	</p:dialog> -->
+</ui:composition>

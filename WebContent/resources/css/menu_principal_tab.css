@@ -1,0 +1,51 @@
+
+.menu_principal{
+	/* width: 74.468085106383%; 840px / 1128px */
+   	float: right;
+   	padding-right: 2%;
+   	padding-top: 10px;
+}
+
+.sair{
+	color: #ffffff !important;
+}
+
+.remover_borda {
+    border: 0px !important;
+    padding: 0px !important;
+    background: none !important;
+}
+
+.remover_borda .ui-menu-parent > a .ui-menuitem-text {
+	/* , 
+	.menu_principal-sistema > .ui-menu-list > .ui-menuitem > a > .ui-menuitem-text */
+    color: #ffffff !important;
+}
+
+.remover_borda .ui-icon-triangle-1-s {
+    background: url(#{resource['images:seta-para-baixo.png']}) no-repeat;
+}
+
+.menu_principal > form{
+	float: right;
+	display: inline-block;
+}
+
+.menu_principal, .menu_principal .ui-tabs-nav{
+	font-size: 0.9em;
+	background: none !important;
+}
+
+.menu_principal .ui-menuitem{
+	z-index: 999 !important;
+}
+
+.menu_principal .remover_padding{
+	padding: none !important;
+}
+
+@media screen and (max-width: 860px) {	
+	#menu_principal{
+		visibility: hidden;
+	}
+}

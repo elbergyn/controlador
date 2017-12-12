@@ -1,0 +1,15 @@
+drop table if exists movimento_estoque cascade;
+drop table if exists valor_produto cascade;
+drop table if exists estoque cascade;
+drop table if exists Produto cascade;
+create table Produto (id  bigserial not null, descricao varchar(50), status varchar(255), unidade varchar(10), usuario_id int8 not null, primary key (id));
+create table movimento_estoque (id  bigserial not null, data TIMESTAMP DEFAULT NOW() not null, qtde int4, tipo_lancamento varchar(255), produto_id int8 not null, usuario_id int8 not null, primary key (id));
+create table Estoque (id  bigserial not null, qtde INTEGER DEFAULT 0 not null, qtde_minima INTEGER DEFAULT 0 not null, produto_id int8 not null, usuario_id int8 not null, primary key (id));
+create table valor_produto (id  bigserial not null, data_atualizacao TIMESTAMP DEFAULT NOW() not null, lucro_percentual float8 not null, valor_custo numeric(2, 0) not null, valor_venda numeric(2, 0) not null, produto_id int8 not null, usuario_id int8 not null, primary key (id));
+alter table Produto add constraint FK_ml4gqvsdcnlxau4qqcqjrgwln foreign key (usuario_id) references Usuario;
+alter table movimento_estoque add constraint FK_n7wawvic3okyncfvcjjyfopco foreign key (produto_id) references Produto;
+alter table movimento_estoque add constraint FK_stnfqft3m54crsh16aq6afdjc foreign key (usuario_id) references Usuario;
+alter table Estoque add constraint FK_7wv1ibkyrtllmup8x9xeg6jgp foreign key (produto_id) references Produto;
+alter table Estoque add constraint FK_9f47bmc5las7r4i057u1f33pp foreign key (usuario_id) references Usuario;
+alter table valor_produto add constraint FK_eimrmlj0k2sgis8ujcudbr1ps foreign key (produto_id) references Produto;
+alter table valor_produto add constraint FK_3q95ckclicxnrbxmm3hsa8bxe foreign key (usuario_id) references Usuario;

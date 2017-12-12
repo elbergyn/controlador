@@ -1,0 +1,31 @@
+@CHARSET "UTF-8";
+
+html,body {
+	height: 100%;
+	width: 100%;
+	margin: 0px;
+	padding: 0px;
+}
+
+.ui-widget{
+	font-size: 14px !important;
+	font-family: arial, sans-serif !important;
+}
+
+.ui-dialog{
+	max-width: 60% !important;
+	z-index: 99999 !importante;
+	position: relative;
+	top: 10px;
+}
+
+.ui-widget-content, .ui-panelgrid, .ui-panelgrid-cell{
+	border: none !important;
+	/* font-size: 1em !important; */
+}
+
+.align_top{
+	padding-top: 10px !important;
+	vertical-align: top !important;
+	text-align: center;
+}

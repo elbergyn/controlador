@@ -1,0 +1,28 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+		<p:panelGrid columns="2" columnClasses="rotulo, campo" layout="grid" >
+			<p:outputLabel for="pagCartao" value="Cartão" />
+			<p:selectOneMenu id="pagCartao" required="true"
+				styleClass="ui-selectonemenu-normal"
+				requiredMessage="Informe o cartão para pagamento"
+				value="#{cadastroContaPagarBean.cartao}">
+				<p:ajax event="change" partialSubmit="true" process="@this"
+					update="vencCartao" />
+				<f:selectItem itemLabel="Selecione cartão" />
+				<f:selectItems value="#{cadastroContaPagarBean.cartoes}" var="c"
+					itemLabel="#{c.descricao}" itemValue="#{c}" />
+			</p:selectOneMenu>
+			<p:outputLabel for="vencCartao" value="Próximo vencimento" />
+			<p:selectOneRadio id="vencCartao" required="true"
+				requiredMessage="Informe o próximo vencimento"
+				converter="dataMenuConverter"
+				value="#{cadastroContaPagarBean.conta.vencimento}">
+				<p:ajax update="vencimento" partialSubmit="true" process="@this"/>
+				<f:selectItems value="#{cadastroContaPagarBean.vencimentosCartao}" />
+			</p:selectOneRadio>
+		</p:panelGrid>
+</ui:composition>

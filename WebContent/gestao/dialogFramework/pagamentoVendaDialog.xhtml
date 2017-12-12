@@ -1,0 +1,112 @@
+<ui:composition 
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+		
+		<p:panelGrid id="panelCadastroDialog" columns="2" layout="grid"
+				columnClasses="rotulo, campo" styleClass="remover_borda_padding">
+			<p:outputLabel value="Desconto %: " for="txDesc" />
+			<p:inputText id="txDesc"
+				value="#{pagamentoOrcamentoBean.venda.percentualDesconto}"
+				onfocus="configurarDecimal(this);" converter="decimalConverter">
+				<p:ajax event="blur" process="@this" partialSubmit="true"
+					listener="#{pagamentoOrcamentoBean.calcularDesconto()}"
+					update="desconto dadosPagamento" />
+			</p:inputText>
+				
+			<p:outputLabel value="Valor desconto: " for="desconto" />
+			<p:inputText id="desconto" styleClass="moeda" 
+				onfocus="configurarMoeda();" converter="moedaConverter"
+				value="#{pagamentoOrcamentoBean.venda.valorDesconto}">
+				<p:ajax event="blur" process="@this" partialSubmit="true"
+						listener="#{pagamentoOrcamentoBean.calcularTaxaDesconto}"
+						update="txDesc dadosPagamento" />
+			</p:inputText>
+		</p:panelGrid>
+	    
+	    <!-- Dados do pagamento -->
+		<p:panelGrid id="dadosPagamento" columns="2" layout="grid"
+			columnClasses="rotulo, campo" styleClass="remover_borda_padding">
+			
+			<p:outputLabel value="Valor a receber: " for="valorRec" />
+			<p:inputText id="valorRec" disabled="true"
+				value="#{pagamentoOrcamentoBean.valorPagar}">
+				<f:convertNumber type="currency" />
+			</p:inputText>
+			
+			<p:outputLabel value="Valor pago: " for="recebido" />
+			<p:inputText id="recebido" styleClass="moeda"
+				onfocus="configurarMoeda()"
+				value="#{pagamentoOrcamentoBean.valorPago}">
+				<f:convertNumber type="currency" />
+			</p:inputText>
+			
+			<p:outputLabel value="Tipo pagamento: " for="tipoRec" />
+			<p:column>
+				<p:selectOneMenu id="tipoRec"
+					value="#{pagamentoOrcamentoBean.pagamento.tipoRecebimento}">
+					<f:selectItem itemLabel="Selecione" itemValue="" />
+					<f:selectItems
+						value="#{pagamentoOrcamentoBean.tiposRecebimento}" var="item"
+						itemLabel="#{item.descricao}" itemValue="#{item}" />
+				</p:selectOneMenu>
+				
+				<p:spacer width="5px" />
+				
+				<p:commandButton icon="icon-button-add" title="Adicionar pagamento" 
+					actionListener="#{pagamentoOrcamentoBean.adicionarPagamento()}"
+					process="dadosPagamento" partialSubmit="true"
+					update="tablePag dadosPagamento"
+					oncomplete="$('#recebido').select()"/>
+				
+			</p:column>
+		</p:panelGrid>
+		
+		<p:dataTable value="#{pagamentoOrcamentoBean.venda.pagamentos}"
+			var="item" emptyMessage="" id="tablePag" rows="5" 
+			paginator="true" rowsPerPageTemplate="4"
+			paginatorAlwaysVisible="false" paginatorPosition="top" reflow="true">
+			
+			<p:column headerText="Tipo pagamento">
+				<h:outputLabel value="#{item.tipoRecebimento.descricao}" />
+			</p:column>
+			<p:column headerText="Valor">
+				<h:outputLabel value="#{item.valor}">
+					<f:convertNumber type="currency" />
+				</h:outputLabel>
+			</p:column>
+			<p:column style="text-align: center; width: 45px;">
+				<p:commandButton icon="icon-delete" title="Excluir"
+					process="@this" partialSubmit="true"
+					oncomplete="PF('confirmacaoExclusao').show()">
+					<f:setPropertyActionListener
+						target="#{pagamentoOrcamentoBean.pagamento}" value="#{item}" />
+				</p:commandButton>
+			</p:column>
+
+			<p:columnGroup type="footer" id="totais">
+				<p:row>
+					<p:column footerText="Valor a receber" />
+					<p:column colspan="2"
+						footerText="#{pagamentoOrcamentoBean.valorPagarMoeda}" />
+				</p:row>
+			</p:columnGroup>
+			
+		</p:dataTable>
+	    
+	    <p:confirmDialog header="Exclusão de produto" message="Tem certeza que deseja remover este pagamento?"
+	    		widgetVar="confirmacaoExclusao" appendTo="body">
+	    	<p:commandButton value="Sim" icon="icon-button-ok" title="Remover pagamento" 
+					actionListener="#{pagamentoOrcamentoBean.removerPagamento()}"
+					process="@this"
+					update="tablePag valorRec"
+					oncomplete="PF('confirmacaoExclusao').hide();return false;$('#recebido').select()"/>
+	    	<p:button value="Não" onclick="PF('confirmacaoExclusao').hide(); return false;" icon="icon-button-no"/>
+	    </p:confirmDialog>
+	    
+	    <p:hotkey bind="i" handler="$('#recebido').focus()" />
+		<p:focus for="recebido" />
+	
+</ui:composition>

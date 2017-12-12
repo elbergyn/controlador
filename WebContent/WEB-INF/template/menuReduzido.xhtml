@@ -1,0 +1,23 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+	<h:outputStylesheet library="css" name="menu_reduzido.css" />
+
+	<h:form id="form_menu_reduzido" style="display: inline-block">
+		<div id="position">
+			<h:graphicImage id="menu_r" library="images" name="32/menu.png"
+				styleClass="img_menu" />
+		</div>
+
+		<p:tieredMenu overlay="true" trigger="menu_r" my="left top"
+			at="left bottom" style="width:200px">
+			<ui:include src="/WEB-INF/template/itensMenu.xhtml" />
+		</p:tieredMenu>
+		<!-- <p:menu toggleable="true" overlay="true" my="left top" >
+			<ui:include src="/WEB-INF/template/itensMenu.xhtml" />
+		</p:menu> -->
+	</h:form>
+</ui:composition>

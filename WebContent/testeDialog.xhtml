@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title>Login</title>
+	<h:outputStylesheet library="css" name="login.css" />
+</h:head>
+
+<h:body>
+	<h:form>
+		<p:commandButton onclick="PF('selecionarCheckins').show()" value="Primeiro"/>
+		<p:commandButton oncomplete="PF('confirmarCheckout').show()" value="Segundo"/>
+		<p:commandButton oncomplete="PF('informacaoCliente').show()" value="Terceiro"/>
+		<p:commandButton oncomplete="PF('hospedesCheckin').show()" value="Quarto"/>
+		<p:commandButton oncomplete="PF('detalheFinanceiro').show()" value="Quinto"/>
+		
+		<p:dialog widgetVar="selecionarCheckins" id="selecionarCheckinsDialog"
+			header="Selecione os hospedes para checkout" closeOnEscape="true"
+			showEffect="fade" hideEffect="explode" resizable="true" width="860"
+			modal="true" closable="true">
+			<p:dataTable id="checkoutTable" 
+				rowKey="" style="margin-bottom:0">
+				<f:facet name="header">
+            		Check-in
+       			</f:facet>
+				<p:column selectionMode="multiple"
+					style="width:16px;text-align:center" />
+				<p:column headerText="Hospedes">
+					<p:commandButton icon="fa fa-sign-in"
+						process="@this"
+						oncomplete="PF('hospedesCheckin').show()"
+						update="">
+					</p:commandButton>
+				</p:column>
+				<p:column headerText="Apartamento" style="width: 100px">
+					<h:outputText value="#{checkin.apto.descricao}" />
+				</p:column>
+				<p:column headerText="Diária"
+					style="text-align: center; width: 120px">
+					<h:outputText value="#{checkin.diaria.valorDiaria}">
+						<f:convertNumber type="currency" />
+					</h:outputText>
+				</p:column>
+				<p:column headerText="Entrada"
+					style="text-align: center; width: 150px">
+					<h:outputText value="#{checkin.entrada}">
+						
+					</h:outputText>
+				</p:column>
+				<f:facet name="footer">
+					<p:commandButton process="checkoutTable" update=""
+						icon="fa fa-sign-out" value="Checkout"
+						oncomplete="PF('confirmarCheckout').show()"
+						onsuccess=" PF('selecionarCheckins').hide()" />
+				</f:facet>
+			</p:dataTable>
+		</p:dialog>
+		
+		<p:dialog widgetVar="confirmarCheckout" id="confirmarCheckoutDialog"
+			header="Checkout" width="460" modal="true">
+			<p:panelGrid columns="2" layout="grid" id="panelCheckout"
+				columnClasses="ui-grid-col-3, ui-grid-col-4"
+				styleClass="panelgrid-noborder">
+				<p:outputLabel value="Total diarias selecionado" style="font-weight: bold; color: green" />
+				<h:outputText
+					style="font-weight: bold; color: green" id="totalSelecao">
+				</h:outputText>
+
+				<p:outputLabel value="Total" style="font-weight: bold; color: blue" />
+				<h:outputText style="font-weight: bold; color: blue">
+				</h:outputText>
+
+				<p:outputLabel value="Data saída" />
+				<p:calendar  locale="pt">
+				</p:calendar>
+				<p:commandButton value="Salvar"	process="panelCheckout @this" update=""
+					oncomplete="PF('confirmarCheckout').hide()" />
+			</p:panelGrid>
+		</p:dialog>
+		
+		<p:dialog widgetVar="informacaoCliente" id="informacaoClienteDialog"
+			header="Informção do cliente "
+			modal="true" showEffect="fade" hideEffect="explode" resizable="true"
+			width="768">
+			<p:panelGrid columns="2" layout="grid" id="panelCliente"
+				columnClasses="ui-grid-col-3, ui-grid-col-4">
+				<p:outputLabel value="CPF/CNPJ" />
+				<h:outputText />
+				<p:outputLabel value="Telefone" />
+				<h:outputText />
+				<p:outputLabel value="Email" />
+				<h:outputText />
+			</p:panelGrid>
+		</p:dialog>
+		
+		<p:dialog widgetVar="hospedesCheckin" id="checkinHospedesDialog"
+			header="Hospedes - "
+			responsive="true" modal="true" width="340">
+			<p:dataTable id="hospedesTable"
+				var="hospede" emptyMessage="Nenhum hospede adicionado."
+				resizableColumns="true">
+				<p:column headerText="Hospede - CPF"
+					style="text-align: center ;width: 120px">
+					<h:outputText  />
+				</p:column>
+			</p:dataTable>
+		</p:dialog>
+		
+		<p:dialog widgetVar="detalheFinanceiro" id="detalheFinanceiroDialog"
+			header="Detalhamento financeiro" modal="true" closeOnEscape="true"
+			resizable="true" width="978">
+			<p:panelGrid columns="4" layout="grid" id="panelFinanceiro"
+				columnClasses="ui-grid-col-2, ui-grid-col-3, ui-grid-col-1, ui-grid-col-2">
+				<p:outputLabel value="Cliente" />
+				<h:outputText />
+				<p:outputLabel value="Subtotal" />
+				<h:outputText 
+					style="font-weight: bold; color: red">
+					<f:convertNumber type="currency" />
+				</h:outputText>
+
+				<p:outputLabel value="Desconto" />
+				<h:outputText 
+					style="font-weight: bold">
+					<f:convertNumber type="currency" />
+				</h:outputText>
+				<p:outputLabel value="Total" />
+				<h:outputText 
+					style="font-weight: bold; color: blue">
+					<f:convertNumber type="currency" />
+				</h:outputText>
+				<p:outputLabel value="Parcelas" />
+				<p:inputText />
+			</p:panelGrid>
+		</p:dialog>
+	</h:form>
+</h:body>
+
+</html>

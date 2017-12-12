@@ -1,0 +1,65 @@
+<ui:composition template="/WEB-INF/template/LayoutPadrao.html"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+	<ui:define name="title">Cadastro de cheques</ui:define>
+	<ui:param name="bean" value="#{cadastroChequeBean}" />
+
+	<ui:define name="corpo">
+		<p:panel header="Cadastro de cheques" id="panelCadastro">
+			<ui:include src="/WEB-INF/template/botoesCadastro.xhtml" />
+			
+			<p:panelGrid columns="2" columnClasses="rotulo, campo" layout="grid">
+				<p:outputLabel for="banco" value="Banco"/>
+				<p:selectOneMenu id="banco" required="true" requiredMessage="Informe o banco" 
+					value="#{cadastroChequeBean.cheque.banco}">
+					<f:selectItem itemLabel="Selecione o banco" />
+					<f:selectItems value="#{cadastroChequeBean.listarBancos()}" var="item" 
+						itemLabel="#{item.descricao}" itemValue="#{item}" />
+				</p:selectOneMenu>
+			
+				<p:outputLabel value="Descrição" for="descricao" />
+				<p:inputText id="descricao" size="25" maxlength="30" required="true"
+					requiredMessage="Informe a descrição"
+					value="#{cadastroChequeBean.cheque.descricao}"/>
+			</p:panelGrid>
+		</p:panel>
+		<p:panel styleClass="sem-fundo">
+			<p:dataTable id="table" value="#{cadastroChequeBean.listarCheques()}" var="item" reflow="true"
+				style="margin-top: 5px; width: 99,5%" emptyMessage="Nenhum cheque cadastrado" rows="10" paginator="true"
+				rowsPerPageTemplate="10 20 30" paginatorAlwaysVisible="false" paginatorPosition="top" >
+							
+				<f:facet name="header">
+					Cheques cadastrados
+				</f:facet>
+				
+				<p:column headerText="Banco" sortBy="#{item.banco.descricao}">
+					<h:outputText value="#{item.banco.descricao}" />
+				</p:column>
+				<p:column headerText="Cheque" sortBy="#{item.descricao}">
+					<h:outputText value="#{item.descricao}" />
+				</p:column>
+				<p:column style="text-align: center; width: 90px;">
+					<p:commandButton icon="icon-edit" title="Editar" process="@this" partialSubmit="true"
+						update="panelCadastro">
+						<f:setPropertyActionListener target="#{bean.cheque}" value="#{item}"/>
+					</p:commandButton>
+					<p:commandButton icon="icon-delete" title="Excluir" process="@this"  
+						partialSubmit="true" oncomplete="PF('confirmacaoExclusao').show()" >
+						<f:setPropertyActionListener target="#{bean.cheque}" value="#{item}"/>	
+					</p:commandButton>
+				</p:column>
+			</p:dataTable>
+		</p:panel>
+		
+		<p:confirmDialog header="Exclusão de cheque" message="Tem certeza que deseja excluir o cheque?"
+	    		widgetVar="confirmacaoExclusao" >
+	    	<p:commandButton value="Sim" action="#{bean.excluir()}" partialSubmit="true" process="@this" 
+	    		oncomplete="PF('confirmacaoExclusao').hide();" icon="icon-button-ok" update="table"/>
+	    	<p:button value="Não" onclick="PF('confirmacaoExclusao').hide(); return false;" icon="icon-button-no"/>
+	    </p:confirmDialog>
+	</ui:define>
+</ui:composition>

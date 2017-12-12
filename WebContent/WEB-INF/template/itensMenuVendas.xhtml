@@ -1,0 +1,31 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+	<p:submenu label="Produtos">
+		<p:menuitem value="Cadastrar Fornecedores" url="/fornecedor/" />
+		<p:menuitem value="Cadastrar Produtos" url="/produto/"/>
+		<p:menuitem value="Lançamentos produto" url="/lancamento_produto/"/>
+		<p:menuitem value="Lançamentos Estoque" url="/estoque/"/>
+		<p:menuitem value="Movimento de estoque"  url="/movimento_estoque/"/>
+		<p:menuitem value="Histórico de valores" url="/historico_valor/"/>
+	</p:submenu>
+	
+	<p:submenu label="Caixa">
+		<p:menuitem value="Caixa" url="/caixa/"/>
+		<p:menuitem value="Movimento Caixa" url="/caixa_movimento/"/>
+		<p:menuitem value="Pesquisar caixa" url="/pesq_fechamentos/"/>
+	</p:submenu>
+	
+	<p:submenu label="PDV">
+		<p:menuitem value="Cliente" url="/cad_cliente/"/>
+		<p:menuitem value="Funcionário" url="/cad_funcionario/"/>
+		<p:menuitem value="Tipo recebimento" url="/cad_tipo_recebimento/"/>
+		<p:menuitem value="Orçamento" url="/orcamento/"/>
+		<p:menuitem value="Venda" url="/venda/"/>
+		<p:menuitem value="Vendas realizadas" url="/pesq_vendas/"/>
+	</p:submenu>
+
+</ui:composition>

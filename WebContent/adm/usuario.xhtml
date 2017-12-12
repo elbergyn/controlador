@@ -1,0 +1,80 @@
+<ui:composition template="/WEB-INF/template/LayoutPadrao.html"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+	<ui:define name="title">Cadastro Usuário</ui:define>
+	<ui:param name="bean" value="#{cadastroUsuarioBean}" />
+
+	<ui:define name="corpo">
+		<p:panel header="Cadastro de usuário" id="panelCadastro">
+			<ui:include src="/WEB-INF/template/botoesCadastro.xhtml" />
+						
+			<ui:include src="/WEB-INF/component/dadosUsuario.xhtml" />
+						
+			<p:panelGrid columns="2" columnClasses="rotulo, campo" layout="grid" styleClass="gridSimples"
+				rendered="#{cadastroUsuarioBean.mostrarAdm}">
+				<p:outputLabel for="tipo" value="Tipo usuário" />
+				<p:selectOneMenu id="tipo" value="#{cadastroUsuarioBean.usuario.tipo}">
+					<f:selectItems value="#{cadastroUsuarioBean.tipos}" var="t" 
+						itemLabel="#{t.descricao}" itemValue="#{t}"/>
+				</p:selectOneMenu>
+			</p:panelGrid>
+			
+		</p:panel>
+		<p:panel styleClass="sem-fundo">
+			<p:dataTable id="table" value="#{bean.listarUsuarios()}" var="item" widgetVar="usuariosTable" reflow="true"
+				style="margin-top: 5px; width: 99,5%" emptyMessage="Nenhum usuário cadastrado" rows="20" paginator="true"
+				rowsPerPageTemplate="10 20 30" paginatorAlwaysVisible="false" paginatorPosition="top" 
+				>
+							
+				<f:facet name="header">
+					Usuários cadastrados
+				</f:facet>
+				
+				<p:column headerText="Cadastro" filterBy="#{item.cadastro}" filterMatchMode="contains" 
+					style="text-align: center">
+					<h:outputText value="#{item.cadastro}">
+						<f:convertDateTime pattern="dd/MM/yyyy" />
+					</h:outputText>
+				</p:column>
+				
+				<p:column headerText="Descrição" filterBy="#{item.descricao}" filterMatchMode="contains" >
+					<h:outputText value="#{item.descricao}" />
+				</p:column>
+				
+				<p:column headerText="E-mail" filterBy="#{item.email}" filterMatchMode="contains" >
+					<h:outputText value="#{item.email}" />
+				</p:column>
+				
+				<p:column headerText="Tipo" filterBy="#{item.tipo.descricao}" filterMatchMode="contains" >
+					<h:outputText value="#{item.tipo.descricao}" />
+				</p:column>
+				
+				<p:column headerText="Status" filterBy="#{item.confirmadoString}" filterMatchMode="contains">
+					<h:outputText value="#{item.confirmadoString}" />
+				</p:column>
+				
+				<p:column style="text-align: center; width: 90px;">
+					<p:commandButton icon="icon-edit" title="Editar" process="@this" partialSubmit="true"
+						update="panelCadastro">
+						<f:setPropertyActionListener target="#{cadastroUsuarioBean.usuario}" value="#{item}"/>
+					</p:commandButton>
+					<p:commandButton icon="icon-delete" title="Excluir" process="@this"  
+						partialSubmit="true" oncomplete="PF('confirmacaoExclusao').show()" >
+						<f:setPropertyActionListener target="#{cadastroUsuarioBean.usuario}" value="#{item}"/>	
+					</p:commandButton>
+				</p:column>
+			</p:dataTable>
+		</p:panel>
+		
+		<p:confirmDialog header="Exclusão de usuário" message="Tem certeza que deseja excluir o usuário?"
+	    		widgetVar="confirmacaoExclusao" >
+	    	<p:commandButton value="Sim" action="#{bean.excluir()}" partialSubmit="true" process="@this" 
+	    		oncomplete="PF('confirmacaoExclusao').hide();" icon="icon-button-ok" update="table"/>
+	    	<p:button value="Não" onclick="PF('confirmacaoExclusao').hide(); return false;" icon="icon-button-no"/>
+	    </p:confirmDialog>
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,36 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+	<p:panelGrid columns="2" columnClasses="rotulo, campo" layout="grid"
+		styleClass="gridSimples">
+		<p:outputLabel for="descricao" value="Usuário" />
+		<p:inputText id="descricao" value="#{bean.usuario.descricao}"
+			required="true" requiredMessage="Informe o usuário" size="30"
+			maxlength="20" validator="validarCampoBranco" />
+
+		<p:outputLabel for="senha" value="Senha" />
+		<p:password id="senha" match="confirmacao"
+			required="#{bean.solicitarSenha}" requiredMessage="Informe a senha"
+			value="#{bean.usuario.senha}" weakLabel="Senha fraca"
+			goodLabel="Senha média" strongLabel="Senha forte"
+			promptLabel="Informe uma senha entre 4 e 20 caracteres"
+			feedback="true" maxlength="20" validator="validarCampoBranco" />
+
+		<p:outputLabel for="confirmacao" value="Confirme a senha" />
+		<p:password id="confirmacao" required="#{bean.solicitarSenha}"
+			requiredMessage="Confirme a senha" />
+
+		<p:outputLabel for="celular" value="Celular" />
+		<p:inputMask id="celular" mask="(99) 9999-9999?9"
+			value="#{bean.usuario.celular}" />
+
+		<p:outputLabel for="email" value="E-mail" />
+		<p:inputText id="email" value="#{bean.usuario.email}" required="true"
+			requiredMessage="Informe o email"
+			title="Insira um e-mail para possivel recuperação de senha"
+			validator="emailValidation" size="40" />
+	</p:panelGrid>
+</ui:composition>

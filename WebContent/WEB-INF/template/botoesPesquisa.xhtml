@@ -1,0 +1,12 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+	<h:panelGrid columns="3" style="padding-bottom: 5px">				
+		<p:commandButton icon="icon-search" value="Pesquisar" action="#{bean.pesquisar()}" update="panelItens"/>
+		<p:commandButton icon="icon-empty" value="Limpar" action="#{bean.novo()}" immediate="true"/>
+		<p:commandButton icon="icon-new" value="Cadastrar" action="#{bean.cadastrar()}" immediate="true"/>
+	</h:panelGrid>
+</ui:composition>

@@ -1,0 +1,45 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+	<p:dataGrid columns="4" layout="grid"  
+		emptyMessage="Não há orçamentos"
+		var="item" value="#{cadastroOrcamentoBean.orcamentos}"
+		id="tabOrcamento">
+		<f:facet name="header">Orçamentos abertos</f:facet>
+		
+		<p:panel header="Cód. #{item.id}" styleClass="ui-font-size-1" >
+			<h:panelGrid columns="1" style="width: 100%" >
+				<p:ajax event="dblclick" partialSubmit="true" process="@this" update="tabView" 
+					listener="#{cadastroOrcamentoBean.selectOrcamento(item)}"/>
+				
+				<p:outputLabel value="#{item.funcionario.nome}" />
+				<p:outputLabel value="#{item.valorTotal}" >
+					<f:convertNumber type="currency" />
+				</p:outputLabel>
+
+				<p:panel styleClass="text_center">				
+					<p:commandButton icon="icon-view" title="Visualizar informações" 
+						oncomplete="PF('dlgOrcamento').show()"
+						partialSubmit="true" process="@this" actionListener="#{cadastroOrcamentoBean.selectOrcamento(item)}"
+						update="dlgDadosOrcamento"/>
+					
+					<p:spacer height="10"/>
+					
+					<p:button icon="icon-cifrao" title="Efetuar pagamento" href="/pagamento/#{item.id}" />
+						
+				</p:panel>
+			</h:panelGrid>
+		</p:panel>
+	</p:dataGrid>
+	
+	<p:dialog header="Orçamento #{cadastroOrcamentoBean.orcamento.id}" 
+		modal="true" style="width: 60% !important" appendTo="form"
+		showEffect="scale" hideEffect="drop" widgetVar="dlgOrcamento"
+		id="dlgDadosOrcamento">
+		<ui:include src="/WEB-INF/component/vendas/dadosOrcamento.xhtml" />
+	</p:dialog>
+	
+</ui:composition>

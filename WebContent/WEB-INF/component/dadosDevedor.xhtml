@@ -1,0 +1,29 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+	<p:panelGrid columns="2" columnClasses="rotulo, campo" id="infDevedor"
+		layout="grid" styleClass="gridSimples">
+		<p:outputLabel value="Descrição" for="devdescricao" />
+		<p:inputText id="devdescricao" size="30" maxlength="15"
+			required="#{cadastroDevedorBean.requerido}" 
+			requiredMessage="Informe a descrição"
+			value="#{cadastroDevedorBean.devedor.descricao}" />
+
+		<p:outputLabel value="Telefone fixo" for="devfixo" />
+		<p:inputMask id="devfixo" mask="(99) 9999-9999?9"
+			value="#{cadastroDevedorBean.devedor.fixo}" />
+
+		<p:outputLabel value="Telefone celular" for="devcelular" />
+		<p:inputMask id="devcelular" mask="(99) 9999-9999?9"
+			value="#{cadastroDevedorBean.devedor.celular}" />
+
+		<p:outputLabel for="devemail" value="E-mail" />
+		<p:inputText id="devemail" 
+			value="#{cadastroDevedorBean.devedor.email}"
+			validator="emailValidation" size="35" />
+	</p:panelGrid>
+
+</ui:composition>

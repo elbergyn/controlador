@@ -1,0 +1,135 @@
+<ui:composition template="/WEB-INF/template/LayoutPadrao.html"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+	<ui:define name="title">Realizar pagamento</ui:define>
+
+	<ui:param name="bean" value="#{pagamentoOrcamentoBean}" />
+	<ui:param name="immediate" value="true" /><!-- utilizado para salvar -->
+
+	<ui:define name="corpo">
+		<p:panelGrid columns="2" layout="grid" style="width: 100%">
+			<p:column>
+				<!-- <ui:include src="/WEB-INF/template/botoesCadastro.xhtml" /> -->
+				<h:panelGrid columns="3" style="padding-bottom: 5px">
+					<p:commandButton value="Salvar" icon="icon-save" action="#{bean.salvar()}" 
+						update="panelCadastro messageSimple table dadosOrcamento" immediate="#{immediate}"/>
+					<p:commandButton value="Novo" icon="icon-new" action="#{bean.novo()}" 
+						immediate="true"/>
+				</h:panelGrid>
+				
+				<p:panel header="Realizar pagamento" id="panelCadastro">
+					<p:panelGrid columns="2" layout="grid"
+						columnClasses="rotulo, campo" styleClass="remover_borda_padding">
+
+						<p:outputLabel value="Desconto %: " for="txDesc" />
+						<p:inputText id="txDesc"
+							value="#{pagamentoOrcamentoBean.venda.percentualDesconto}"
+							onfocus="configurarDecimal(this);" converter="decimalConverter">
+							<p:ajax event="blur" process="@this" partialSubmit="true"
+								listener="#{pagamentoOrcamentoBean.calcularDesconto()}"
+								update="desconto valorRec @(.ui-datatable)" />
+						</p:inputText>
+
+						<p:outputLabel value="Valor desconto: " for="desconto" />
+						<p:inputText id="desconto" styleClass="moeda"
+							onfocus="configurarMoeda();" converter="moedaConverter"
+							value="#{pagamentoOrcamentoBean.venda.valorDesconto}">
+							<p:ajax event="blur" process="@this" partialSubmit="true"
+								listener="#{pagamentoOrcamentoBean.calcularTaxaDesconto}"
+								update="txDesc valorRec @(.ui-datatable)" />
+						</p:inputText>
+
+					</p:panelGrid>
+
+					<!-- Dados do pagamento -->					
+					<p:panelGrid columns="2" layout="grid" id="dadosPagamento"
+						columnClasses="rotulo, campo" styleClass="remover_borda_padding">
+
+						<p:outputLabel value="Valor a receber: " for="valorRec" />
+						<p:inputText id="valorRec" styleClass="moeda"
+							onfocus="configurarMoeda()"
+							value="#{pagamentoOrcamentoBean.valorPagar}">
+							<f:convertNumber type="currency" />
+						</p:inputText>
+
+						<p:outputLabel value="Valor pago: " for="recebido" />
+						<p:inputText id="recebido" styleClass="moeda"
+							onfocus="configurarMoeda()"
+							value="#{pagamentoOrcamentoBean.valorPago}">
+							<f:convertNumber type="currency" />
+						</p:inputText>
+
+						<p:outputLabel value="Tipo pagamento: " for="tipoRec" />
+						<p:column>
+							<p:selectOneMenu id="tipoRec"
+								value="#{pagamentoOrcamentoBean.pagamento.tipoRecebimento}">
+								<f:selectItem itemLabel="Selecione" itemValue="" />
+								<f:selectItems
+									value="#{pagamentoOrcamentoBean.tiposRecebimento}" var="item"
+									itemLabel="#{item.descricao}" itemValue="#{item}" />
+							</p:selectOneMenu>
+
+							<p:commandButton icon="icon-button-add"
+								style="left: 5px;" title="Adicionar pagamento"
+								partialSubmit="true" process="dadosPagamento"
+								actionListener="#{pagamentoOrcamentoBean.adicionarPagamento()}"
+								update="dadosPagamento @(.ui-datatable)"
+								onclick="$(#tipoRec).select()" />
+						</p:column>
+					</p:panelGrid>
+						
+				</p:panel>
+				<p:dataTable value="#{pagamentoOrcamentoBean.venda.pagamentos}"
+					var="item" emptyMessage="" id="table">
+
+					<p:column headerText="Tipo pagamento">
+						<h:outputLabel value="#{item.tipoRecebimento.descricao}" />
+					</p:column>
+					<p:column headerText="Valor">
+						<h:outputLabel value="#{item.valor}">
+							<f:convertNumber type="currency" />
+						</h:outputLabel>
+					</p:column>
+					<p:column style="text-align: center; width: 45px;">
+						<p:commandButton icon="icon-delete" title="Excluir"
+							process="@this" partialSubmit="true"
+							oncomplete="PF('confirmacaoExclusao').show()">
+							<f:setPropertyActionListener
+								target="#{pagamentoOrcamentoBean.pagamento}" value="#{item}" />
+						</p:commandButton>
+					</p:column>
+
+					<p:columnGroup type="footer" id="totais">
+						<p:row>
+							<p:column footerText="Valor a receber" />
+							<p:column colspan="2"
+								footerText="#{pagamentoOrcamentoBean.valorPagarMoeda}" />
+						</p:row>
+					</p:columnGroup>
+				</p:dataTable>
+				
+				<p:confirmDialog header="Exclusão de produto" message="Tem certeza que deseja remover este pagamento?"
+			    		widgetVar="confirmacaoExclusao" >
+			    	<p:commandButton value="Sim" action="#{pagamentoOrcamentoBean.removerPagamento()}" 
+			    		partialSubmit="true" process="@this" 
+			    		oncomplete="PF('confirmacaoExclusao').hide();" icon="icon-button-ok" 
+			    		update="table panelCadastro"/>
+			    	<p:button value="Não" onclick="PF('confirmacaoExclusao').hide(); return false;" icon="icon-button-no"/>
+			    </p:confirmDialog>
+				
+			</p:column>
+			<p:column>
+				<p:panel id="dadosOrcamento">
+					<ui:include src="/WEB-INF/component/vendas/dadosOrcamentoPag.xhtml" />
+				</p:panel>
+			</p:column>
+		</p:panelGrid>
+		
+		<p:hotkey bind="i" handler="$('#recebido').focus()" />
+		<p:focus for="recebido" />
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,18 @@
+<ui:composition template="/WEB-INF/template/LayoutPadrao.html"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+	<ui:define name="title">Erro</ui:define>
+	<ui:define name="corpo">
+		<h3>Ocorreu um erro no processamento</h3>
+		<p:outputLabel ondblclick="PF('erro').show()">
+			Encaminhado e-mail ao responsável notificando o erro!
+		</p:outputLabel>
+		<p:dialog widgetVar="erro" modal="true" header="Exception">
+			<p:outputLabel value="#{ERRO}" escape="false"/>
+		</p:dialog>
+	</ui:define>
+</ui:composition>

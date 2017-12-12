@@ -1,0 +1,119 @@
+<ui:composition template="/WEB-INF/template/LayoutPadrao.html"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+	<ui:define name="title">Recebimentos</ui:define>
+	<ui:param name="bean" value="#{pesqRecebimentosBean}" />
+	
+	<ui:define name="corpo">
+		<p:panel header="Filtrar recebimentos" id="panelFiltro">
+			
+			<ui:include src="/WEB-INF/template/botoesPesquisa.xhtml" />
+			
+			<p:panelGrid columns="4" columnClasses="rotulo, campo, rotulo, campo" layout="grid">
+						
+				<p:outputLabel value="Descrição" for="descricao" />
+				<p:inputText id="descricao" size="30" maxlength="30" 
+					value="#{pesqRecebimentosBean.descricao}"/>
+					
+				<p:outputLabel for="tipoPag" value="Tipo de recebimento" />
+				<p:selectOneMenu id="tipoPag" value="#{pesqRecebimentosBean.tipoRecebimento}">
+					<f:selectItem itemLabel="Selecione tipo" />
+					<f:selectItems value="#{pesqRecebimentosBean.listarTiposRecebimentos()}" />
+				</p:selectOneMenu>									
+
+				<p:outputLabel value="Inicio recebimento" for="recebimentoini" />
+				<p:calendar id="recebimentoini"
+					value="#{pesqRecebimentosBean.inicioRecebimento}"
+					effect="fade"
+					pattern="dd/MM/yyyy"
+					locale="pt_BR"
+					showButtonPanel="true"
+					navigator="true"/>
+					
+				<p:outputLabel value="Final recebimento" for="recebimentofim" />
+				<p:calendar id="recebimentofim" 
+					value="#{pesqRecebimentosBean.fimRecebimento}"
+					effect="fade"
+					pattern="dd/MM/yyyy"
+					locale="pt_BR"
+					showButtonPanel="true"
+					navigator="true"/>
+					
+				<p:outputLabel for="statusPag" value="Status" />
+				<p:selectOneMenu id="statusPag" styleClass="ui-selectonemenu-normal"
+					value="#{pesqRecebimentosBean.situacao}">
+					<f:selectItem itemLabel="Selecione status" />
+					<f:selectItems value="#{pesqRecebimentosBean.listarSituacaoRecebimentos()}" var="status" 
+					itemLabel="#{status.descricao}" itemValue="#{status}"/>
+				</p:selectOneMenu>
+				
+			</p:panelGrid>
+		</p:panel>
+		<p:panel id="panelItens">
+			<p:dataTable id="table" value="#{pesqRecebimentosBean.recebimentos}" var="item"
+				style="margin-top: 5px; width: 99,5%" emptyMessage="Realize uma nova pesquisa" rows="10" paginator="true"
+				rowsPerPageTemplate="10 20 30" paginatorAlwaysVisible="false" paginatorPosition="top" 
+				reflow="true" 
+				resizableColumns="true">
+							
+				<f:facet name="header">
+					Recebimentos realizados
+				</f:facet>
+				
+				<p:column headerText="Vencimento" style="text-align: center; width: 110px"
+					sortBy="#{item.credito.vencimento}">
+					<h:outputText value="#{item.credito.vencimento}">
+						<f:convertDateTime locale="pt-BR" />
+					</h:outputText>
+				</p:column>		
+				<p:column headerText="Recebimento" style="text-align: center; width: 110px"
+					sortBy="#{item.dataPagamento}">
+					<h:outputText value="#{item.dataPagamento}">
+						<f:convertDateTime locale="pt-BR" />
+					</h:outputText>
+				</p:column>
+				<p:column headerText="Descrição" sortBy="#{item.credito.descricao}">
+					<h:outputText value="#{item.credito.descricao}" />
+				</p:column>
+				<p:column headerText="Devedor" sortBy="#{item.credito.devedor.descricao}">
+					<h:outputText value="#{item.credito.devedor.descricao}" />
+				</p:column>
+				
+				<p:column headerText="Parcela" style="width: 50px; text-align: center">
+					<h:outputText value="#{item.credito.parcela}/#{item.credito.parcelaTotal}" />
+				</p:column>
+				
+				<p:column headerText="Total" style="text-align: center;"
+					sortBy="#{item.credito.valor}">
+					<h:outputText value="#{item.credito.valor}">
+						<f:convertNumber type="currency" />
+					</h:outputText>
+				</p:column>
+				<p:column headerText="Recebido" style="text-align: center;"
+					sortBy="#{item.valor}">
+					<h:outputText value="#{item.valor}">
+						<f:convertNumber type="currency" />
+					</h:outputText>
+				</p:column>
+				<p:column headerText="Situação" style="width: 130px" sortBy="#{item.credito.situacao.descricao}">
+					<h:outputText value="#{item.credito.situacao.descricao}" />
+				</p:column>
+				
+				<p:columnGroup type="footer" rendered="#{pesqRecebimentosBean.mostrarTotal}">
+					<p:row>
+						<p:column colspan="6" style="text-align:right"
+							footerText="Valor total: " />
+							
+						<p:column colspan="2"
+							footerText="#{pesqRecebimentosBean.valorTotal}"/>
+							
+					</p:row>
+				</p:columnGroup>
+			</p:dataTable>
+		</p:panel>
+	</ui:define>
+</ui:composition>

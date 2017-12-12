@@ -1,0 +1,128 @@
+<ui:composition template="/WEB-INF/template/LayoutPadrao.html"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+	<ui:define name="title">Histórico de valor</ui:define>
+	<ui:param name="bean" value="#{pesqHistoricoValorBean}" />
+	
+	<ui:define name="corpo">
+		<p:panel header="Filtrar históricos" id="panelFiltro">
+			
+			<ui:include src="/WEB-INF/template/botoesPesquisa.xhtml" />
+			
+			<p:panelGrid columns="2" columnClasses="rotulo, campo">
+						
+				<p:outputLabel value="Descrição" for="descricao" />
+				<p:inputText id="descricao" size="30" maxlength="30" 
+					value="#{pesqHistoricoValorBean.filtro.descricaoProd}"/>
+							
+				<p:outputLabel value="Data inicio" for="movimentoini" />
+				<p:calendar id="movimentoini"
+					value="#{pesqHistoricoValorBean.filtro.dataInicio}"
+					effect="fade"
+					pattern="dd/MM/yyyy"
+					locale="pt_BR"
+					showButtonPanel="true"
+					navigator="true"/>
+					
+				<p:outputLabel value="Data final" for="movimentofim" />
+				<p:calendar id="movimentofim" 
+					value="#{pesqHistoricoValorBean.filtro.dataFim}"
+					effect="fade"
+					pattern="dd/MM/yyyy"
+					locale="pt_BR"
+					showButtonPanel="true"
+					navigator="true"/>
+				
+			</p:panelGrid>
+		</p:panel>
+		<p:panel id="panelItens" >
+			<p:dataTable id="table" value="#{pesqHistoricoValorBean.historicos}" var="item"
+				style="margin-top: 5px; width: 99%" reflow="true"
+				emptyMessage="Nenhum histórico encontrado" rows="10"
+				paginator="true" rowsPerPageTemplate="10 20 30"
+				paginatorAlwaysVisible="false" paginatorPosition="top">
+
+				<f:facet name="header">
+					Histórico de valores de produtos
+				</f:facet>
+				
+				<!-- <p:column style="width: 20px; text-align: center">
+					<p:rowToggler />
+				</p:column> -->
+				
+				<p:column headerText="Cód" style="width: 100px; ">
+					<h:outputText value="#{item.produto.id}"   />
+				</p:column>
+				
+				<p:column headerText="Última Alteração">
+					<h:outputText value="#{item.data}">
+						<f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+					</h:outputText>
+				</p:column>
+				
+				<p:column headerText="Produto">
+					<h:outputText value="#{item.produto.descricao}"   />
+				</p:column>
+				
+				<p:column headerText="Valor Custo" sortBy="#{item.valorCusto}"
+						style="width: 125px; text-align: center">
+						<h:outputText value="#{item.valorCusto}">
+							<f:convertNumber locale="pt_BR" 
+								type="currency" />
+						</h:outputText>
+					</p:column>
+					<p:column headerText="Lucro %" sortBy="#{item.lucro}"
+						style="width: 125px; text-align: center">
+						<p:outputLabel value="#{item.lucro}">
+							<f:convertNumber type="percent"/>
+						</p:outputLabel>
+					</p:column>
+					<p:column headerText="Valor Venda" sortBy="#{item.valorVenda}"
+						style="width: 125px; text-align: center">
+						<h:outputText value="#{item.valorVenda}">
+							<f:convertNumber locale="pt_BR" 
+								type="currency" />
+						</h:outputText>
+					</p:column>
+
+				<!-- <p:rowExpansion>
+					<p:column headerText="Data" sortBy="#{item.data}"
+					style="width: 100px; text-align: center">
+					<h:outputText value="#{item.data}">
+						<f:convertDateTime locale="pt_BR" pattern="dd/MM/yy HH:mm"/>
+					</h:outputText>
+					</p:column>
+					<p:column headerText="Descrição" sortBy="#{item.produto.descricao}">
+						<h:outputText value="#{item.produto.descricao}" />
+					</p:column>
+					<p:column headerText="Valor Custo" sortBy="#{item.valorCusto}"
+						style="width: 125px; text-align: center">
+						<h:outputText value="#{item.valorCusto}">
+							<f:convertNumber locale="pt_BR" 
+								type="currency" />
+						</h:outputText>
+					</p:column>
+					<p:column headerText="Lucro %" sortBy="#{item.lucro}"
+						style="width: 125px; text-align: center">
+						<h:outputText value="#{item.lucro}">
+							<f:convertNumber pattern="#0.00" />
+						</h:outputText>
+					</p:column>
+					<p:column headerText="Valor Venda" sortBy="#{item.valorVenda}"
+						style="width: 125px; text-align: center">
+						<h:outputText value="#{item.valorVenda}">
+							<f:convertNumber locale="pt_BR" 
+								type="currency" />
+						</h:outputText>
+					</p:column>
+				</p:rowExpansion> -->
+			</p:dataTable>
+		</p:panel>
+		
+		
+	</ui:define>
+</ui:composition>

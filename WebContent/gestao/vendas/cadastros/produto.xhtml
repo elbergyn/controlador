@@ -1,0 +1,140 @@
+<ui:composition template="/WEB-INF/template/LayoutPadrao.html"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+	<ui:define name="title">Cadastro de produtos</ui:define>
+
+	<ui:param name="bean" value="#{cadastroProdutoBean}" />
+	
+	<ui:define name="corpo">
+		<p:panel header="Cadastro de produtos" id="panelCadastro">
+			
+			<ui:include src="/WEB-INF/template/botoesCadastro.xhtml"/>
+			
+			<p:panelGrid columns="4" columnClasses="rotulo, campo, rotulo, campo" layout="grid" >
+				<p:outputLabel value="Código" for="codigo"/>
+				<p:inputText id="codigo" value="#{cadastroProdutoBean.produto.id}" disabled="true"/>
+				
+				<p:outputLabel value="Descrição" for="descricao" />
+				<p:inputText id="descricao" size="25" maxlength="30" value="#{cadastroProdutoBean.produto.descricao}" 
+					required="true" requiredMessage="Informe a descrição do produto" 
+					styleClass="captalize"/>
+				
+				<p:outputLabel value="Unidade" for="unidade" />
+				<p:selectOneMenu id="unidade" value="#{cadastroProdutoBean.produto.unidade}">
+					<f:selectItem itemLabel="Unidade" itemValue="Unid" />
+					<f:selectItem itemLabel="Litro" itemValue="Lt" />
+					<f:selectItem itemLabel="Pacote" itemValue="Pct" />
+					<f:selectItem itemLabel="Quilograma" itemValue="Kg" />
+				</p:selectOneMenu>
+				
+				<p:outputLabel value="Fornecedor" for="fornecedor" />
+				<p:autoComplete id="fornecedor"
+							value="#{cadastroProdutoBean.produto.fornecedor}" dropdown="true"
+							completeMethod="#{cadastroProdutoBean.listarFornecedores}"
+							var="item" itemLabel="#{item.descricao}" itemValue="#{item}"
+							size="30"  required="true"
+							requiredMessage="Informe o fornecedor" />
+				
+				<p:outputLabel value="Qtde minima estoque" for="minimo" />
+				<p:spinner id="minimo" value="#{cadastroProdutoBean.produto.estoque.qtdeMinima}" 
+					min="0" onkeyup="validarNumero(this);"/>
+					
+				<p:outputLabel value="Entrada estoque" for="qtde" />
+				<p:spinner id="qtde" value="#{cadastroProdutoBean.produto.estoque.qtde}" 
+					min="0" onkeyup="validarNumero(this);"/>
+					
+				<p:outputLabel value="Valor custo: " for="custo" />
+				<p:inputText id="custo" required="true" styleClass="moeda" onfocus="configurarMoeda();" 
+					converter="moedaConverter"
+					requiredMessage="Informe o valor de custo"
+					value="#{cadastroProdutoBean.produto.valor.valorCusto}"
+					validator="maiorZeroValidation"/>
+					
+				<p:outputLabel value="Lucro %: " for="lucro" />
+				<p:inputText id="lucro" value="#{cadastroProdutoBean.produto.valor.lucroPercentual}" 
+					required="true" onfocus="configurarDecimal(this);"
+					requiredMessage="Informe o lucro percentual" converter="decimalConverter">
+					<p:ajax event="blur" process="custo, @this" listener="#{cadastroProdutoBean.calcularValor()}"
+						update="total" partialSubmit="true" />
+				</p:inputText>
+					
+				<p:outputLabel value="Valor venda: " for="total" />
+				<p:column>
+					<p:inputText id="total" required="true" styleClass="moeda" onfocus="configurarMoeda();" 
+						converter="moedaConverter"
+						requiredMessage="Informe o valor venda"
+						value="#{cadastroProdutoBean.produto.valor.valorVenda}"
+						validator="maiorZeroValidation"/>
+						<p:commandButton icon="icon-calc" title="Calcular lucro percentual"  
+							partialSubmit="true"
+							process="@this, total, custo"
+							actionListener="#{cadastroProdutoBean.calcularPercentual()}" 
+							update="lucro"/>
+				</p:column>
+				
+				<p:outputLabel value="Cód Barras: " for="barras" />
+				<p:inputText id="barras" size="48" maxlength="48" onkeyup="validarNumero(this)"
+					value="#{cadastroProdutoBean.produto.codBarras}"/>
+				
+			</p:panelGrid>
+		</p:panel>
+
+		<p:panel styleClass="sem-fundo">
+			<p:dataTable id="table" value="#{cadastroProdutoBean.produtos}" var="item" reflow="true" widgetVar="produtosTable"
+				 emptyMessage="Nenhum produto encontrado" rows="10" paginator="true"
+				rowsPerPageTemplate="10 20 30 50 100" paginatorAlwaysVisible="false" paginatorPosition="top" filterDelay="300"
+				lazy="true" >
+							
+				<f:facet name="header">
+					Produtos cadastrados
+				</f:facet>
+				
+				<p:column headerText="Código" sortBy="#{item.id}" style="width: 100px; text-align: center">
+					<h:outputText value="#{item.id}" />
+				</p:column>
+				<p:column headerText="Descrição" sortBy="#{item.descricao}" 
+					filterBy="#{item.descricao}" filterMatchMode="contains">
+						<h:outputText value="#{item.descricao}" />
+				</p:column>
+				<p:column headerText="Unidade" sortBy="#{item.unidade}"
+					filterBy="#{item.unidade}" filterMatchMode="equals">
+						<f:facet name="filter">
+							<p:selectOneMenu onchange="PF('produtosTable').filter()">
+								<f:selectItem itemLabel="" itemValue="" />
+								<f:selectItem itemLabel="Unidade" itemValue="Unid" />
+								<f:selectItem itemLabel="Litro" itemValue="Lt" />
+								<f:selectItem itemLabel="Pacote" itemValue="Pct" />
+								<f:selectItem itemLabel="Quilograma" itemValue="Kg" />
+							</p:selectOneMenu>
+						</f:facet>
+						<h:outputText value="#{item.unidade}" />
+				</p:column>
+				
+				<p:column style="text-align: center; width: 90px;">
+					<p:commandButton icon="icon-edit" title="Editar" process="@this" partialSubmit="true"
+						update="panelCadastro" styleClass="btn32">
+						<f:setPropertyActionListener target="#{bean.produto}" value="#{item}"/>
+					</p:commandButton>
+					<p:commandButton icon="icon-delete" title="Excluir" process="@this"  
+						partialSubmit="true" oncomplete="PF('confirmacaoExclusao').show()" styleClass="btn32">
+						<f:setPropertyActionListener target="#{bean.produto}" value="#{item}"/>	
+					</p:commandButton>
+				</p:column>
+			</p:dataTable>
+		</p:panel>
+		
+		<p:focus for="descricao" />
+		<p:hotkey bind="i" handler="$('#descricao').focus()" />
+		
+		<p:confirmDialog header="Exclusão de produto" message="Tem certeza que deseja excluir o produto?"
+	    		widgetVar="confirmacaoExclusao" >
+	    	<p:commandButton value="Sim" action="#{bean.excluir()}" partialSubmit="true" process="@this" 
+	    		oncomplete="PF('confirmacaoExclusao').hide();" icon="icon-button-ok" update="table"/>
+	    	<p:button value="Não" onclick="PF('confirmacaoExclusao').hide(); return false;" icon="icon-button-no"/>
+	    </p:confirmDialog>
+	</ui:define>
+</ui:composition>

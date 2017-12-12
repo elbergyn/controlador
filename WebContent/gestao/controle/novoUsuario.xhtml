@@ -1,0 +1,28 @@
+<ui:composition template="/WEB-INF/template/LayoutSegundario.html"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+	<ui:define name="title">Cadastro de novo usuário</ui:define>
+
+	<ui:define name="corpo">
+		<p:panel id="panelCadastro" header="Cadastro de novo usuário">
+			<h:panelGrid columns="3" style="padding-bottom: 5px">
+				<p:commandButton value="Salvar" icon="icon-save"
+					action="#{cadastroNovoUsuarioBean.salvar()}"
+					update="panelCadastro messageSimple" />
+				<p:button value="Voltar" icon="icon-return" outcome="pretty:login" />
+			</h:panelGrid>
+	
+			<ui:param name="bean" value="#{cadastroNovoUsuarioBean}" />
+			<ui:include src="/WEB-INF/component/dadosUsuario.xhtml" />
+
+		</p:panel>
+		<div class="ui-messages ui-messages-info ui-corner-all">
+			<div class="ui-messages-info-icon"/>
+			Informe um e-mail válido, será encaminhado um e-mail para validar seu acesso.
+		</div>
+	</ui:define>
+</ui:composition>

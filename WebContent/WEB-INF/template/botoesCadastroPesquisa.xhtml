@@ -1,0 +1,17 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+	<h:outputStylesheet library="css" name="icon.css" />
+	
+	<h:panelGrid columns="3" style="padding-bottom: 5px">
+		<p:button value="Novo" icon="icon-new" action="#{bean.novo()}" />
+		<p:commandButton value="Salvar" icon="icon-save" action="#{bean.salvar()}" />
+		<p:panelGrid>
+			<p:spacer width="20px" />
+			<p:commandButton value="Pesquisar" action="#{bean.pesquisar()}" icon="icon-search"/>
+		</p:panelGrid>
+	</h:panelGrid>
+</ui:composition>

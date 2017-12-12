@@ -1,0 +1,84 @@
+<ui:composition template="/WEB-INF/template/LayoutPadrao.html"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+	<ui:define name="title">Cancelar recebimento</ui:define>
+	
+	<ui:define name="corpo">
+		<p:panel styleClass="sem-fundo">
+			<p:dataTable id="table" var="item" value="#{cancelarRecebimentoBean.baixas}"
+				editable="true" editMode="cell" reflow="true"
+				style="margin-top: 5px; width: 99,5%"
+				emptyMessage="Não há recebimento registrado" rows="10"
+				paginator="true" rowsPerPageTemplate="10 20 30"
+				paginatorAlwaysVisible="false" paginatorPosition="top"
+				rowKey="#{item.id}" 
+				selection="#{cancelarRecebimentoBean.cancelarBaixas}"
+				resizableColumns="true">
+							
+				<f:facet name="header">
+					Recebimentos realizados do dia
+				</f:facet>
+				
+				<p:column selectionMode="multiple" style="width:16px;text-align:center" />
+				<p:ajax event="toggleSelect" listener="#{cancelarRecebimentoBean.rowToggleSelect}" update="btnPag"/>
+				
+				<p:ajax event="rowSelectCheckbox" listener="#{cancelarRecebimentoBean.checked}" update="btnPag" />
+				<p:ajax event="rowUnselectCheckbox" listener="#{cancelarRecebimentoBean.unChecked}" update="btnPag"/>
+				
+				<p:ajax event="rowSelect" listener="#{cancelarRecebimentoBean.checked}" update="btnPag" />
+						
+				<p:column headerText="Descrição" sortBy="#{item.credito.descricao}">
+					<h:outputText value="#{item.credito.descricao}" />
+				</p:column>
+				
+				<p:column headerText="Situação"
+					style="width: 120px; text-align: center"
+					sortBy="#{item.credito.situacao.descricao}">
+					<h:outputText value="#{item.credito.situacao.descricao}" />
+				</p:column>
+				
+				<p:column headerText="Debedor" style="text-align: center; width: 120px"
+					sortBy="#{item.credito.devedor.descricao}">
+					<h:outputText value="#{item.credito.devedor.descricao}" />
+				</p:column>
+				
+				<p:column headerText="Parcela" style="width: 70px; text-align: center">
+					<h:outputText value="#{item.credito.parcela}/#{item.credito.parcelaTotal}" />
+				</p:column>
+
+				<p:column headerText="Vencimento"
+					style="width: 120px; text-align: center"
+					sortBy="#{item.credito.vencimento}">
+					<h:outputText value="#{item.credito.vencimento}">
+						<f:convertDateTime pattern="dd/MM/yyyy" />
+					</h:outputText>
+				</p:column>
+				
+				<p:column headerText="Valor total" style="width: 120px"
+					sortBy="#{item.valor}">
+					<h:outputText value="#{item.valor}">
+						<f:convertNumber type="currency" />
+					</h:outputText>
+				</p:column>
+				
+				<f:facet name="footer">
+					<p:commandButton icon="icon-money" value="Cancelar recebimento" id="btnPag"
+						oncomplete="PF('confirmacao').show()"
+						partialSubmit="true" process="table" disabled="#{!cancelarRecebimentoBean.permitirCancelar}"/>
+				</f:facet>
+				
+			</p:dataTable>
+		</p:panel>
+		
+		<p:confirmDialog header="Cancelar recebimento" message="Tem certeza que deseja cancelar o(s) recebimento(s)?"
+	    		widgetVar="confirmacao" >
+	    	<p:commandButton value="Sim" action="#{cancelarRecebimentoBean.salvar()}" partialSubmit="true" process="@this" 
+	    		oncomplete="PF('confirmacao').hide();" icon="icon-button-ok" update="table"/>
+	    	<p:button value="Não" onclick="PF('confirmacao').hide(); return false;" icon="icon-button-no"/>
+	    </p:confirmDialog>
+	</ui:define>
+</ui:composition>

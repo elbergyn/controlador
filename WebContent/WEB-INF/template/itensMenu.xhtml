@@ -1,0 +1,26 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+	<p:submenu label="Adm" rendered="#{usuarioLogado.tipo == 'ADM'}" >
+		<p:menuitem value="Usuário"  url="/cad_usuario/" />
+		<p:menuitem value="Log de erro" url="/adm/log_erro/" />
+	</p:submenu>
+	
+	<p:submenu rendered="#{usuarioLogado.tipo == 'ADM'}">
+		<ui:include src="/WEB-INF/template/itensMenuVendas.xhtml" />
+	</p:submenu>
+	
+	<p:separator/>
+	
+	<ui:include src="/WEB-INF/template/itensMenuFinanceiro.xhtml"/>
+
+	<p:submenu label="Configuração">
+		<p:menuitem value="Usuário"  url="/cad_usuario/" />
+		<p:menuitem value="Log de erro" url="/adm/log_erro/" />
+	</p:submenu>
+	<p:menuitem onclick="logoff()" value="Sair" icon="icon-button-no" url="/" />
+
+</ui:composition>

@@ -1,0 +1,100 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+			<p:panelGrid columns="4" columnClasses="rotulo, campo, rotulo, campo"
+				layout="grid" >
+				<p:outputLabel value="Data: " />
+				<p:outputLabel disabled="true"
+					value="#{cadastroOrcamentoBean.orcamento.data}">
+					<f:convertDateTime locale="pt_BR" />
+				</p:outputLabel>
+
+				<p:outputLabel value="Cód: " />
+				<p:outputLabel value="#{cadastroOrcamentoBean.orcamento.id}"/>
+
+				<p:outputLabel value="Cliente: " />
+				<p:outputLabel value="#{cadastroOrcamentoBean.orcamento.cliente}"/>
+
+				<p:outputLabel value="Funcionário: " />
+				<p:outputLabel value="#{cadastroOrcamentoBean.orcamento.funcionario.nome}"/>
+
+				<p:outputLabel value="Taxa de serviço: " />
+				<p:outputLabel value="#{cadastroOrcamentoBean.orcamento.cobrarTaxaServico ? 'Sim' : 'Não'}"/>
+
+				<p:outputLabel value="Taxa %: " />
+				<p:outputLabel value="#{cadastroOrcamentoBean.orcamento.percentualTaxaServico}">
+					<f:convertNumber type="percent" />
+				</p:outputLabel>
+
+				<p:outputLabel value="Observação: " />
+				<p:inputTextarea  cols="30" scrollHeight="3" autoResize="false" disabled="true" />
+
+				<p:column />
+				<p:column />
+			</p:panelGrid>
+		
+			<p:dataTable var="item"
+				value="#{cadastroOrcamentoBean.orcamento.itensVenda}"
+				style="margin-top: 5px; width: 99%; "
+				emptyMessage="Nenhum produto adicionado"
+				paginatorAlwaysVisible="false" rowKey="#{item.id}" scrollable="true"
+				scrollHeight="160" resizableColumns="true">
+
+				<f:facet name="header">
+					Itens adicionados
+				</f:facet>
+
+				<p:column headerText="Cód." style="width: 60px">
+					<h:outputLabel value="#{item.produto.id}" />
+				</p:column>
+
+				<p:column headerText="Produto">
+					<h:outputLabel value="#{item.produto.descricao}" />
+				</p:column>
+
+				<p:column headerText="Valor Unit.">
+					<h:outputLabel value="#{item.valorUnitario}">
+						<f:convertNumber type="currency" />
+					</h:outputLabel>
+				</p:column>
+
+				<p:column headerText="Qtde" style="width: 30px; text-align: center">
+					<h:outputLabel value="#{item.qtde}" />
+				</p:column>
+
+				<p:column headerText="Valor Total">
+					<h:outputLabel value="#{item.valorTotal}">
+						<f:convertNumber type="currency" />
+					</h:outputLabel>
+				</p:column>
+
+			</p:dataTable>
+	<!--_____________________________________________________________________-->
+
+	<p:panelGrid columns="6" styleClass="totaisOrcamento" layout="grid">
+		<p:outputLabel value="Valor taxa: " />
+		<p:outputLabel readonly="true"
+			style="background-color: grey"
+			value="#{cadastroOrcamentoBean.orcamento.valorTaxaSevico}">
+			<f:convertNumber type="currency" />
+		</p:outputLabel>
+
+		<p:outputLabel value="Sub total: " />
+		<p:outputLabel readonly="true"
+			style="background-color: grey"
+			value="#{cadastroOrcamentoBean.orcamento.valorItens}">
+			<f:convertNumber type="currency" />
+		</p:outputLabel>
+
+		<p:outputLabel value="Valor Total: " />
+		<p:outputLabel readonly="true"
+			style="background-color: grey"
+			value="#{cadastroOrcamentoBean.orcamento.valorTotal}">
+			<f:convertNumber type="currency" />
+		</p:outputLabel>
+	</p:panelGrid>
+	
+</ui:composition>

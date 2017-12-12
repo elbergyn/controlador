@@ -1,0 +1,264 @@
+<pretty-config xmlns="http://ocpsoft.org/schema/rewrite-config-prettyfaces"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://ocpsoft.org/schema/rewrite-config-prettyfaces
+                      http://ocpsoft.org/xml/ns/prettyfaces/rewrite-config-prettyfaces.xsd">
+
+	<!-- Begin Example RewriteRules // These are custom rewrite-rules, and are 
+		probably not necessary for your application. -->
+	<rewrite match="^/old-url/(\w+)/$" substitute="/new_url/$1/"
+		redirect="301" />
+	
+	<url-mapping id="alterarSenha">
+		<pattern value="/senha/" />
+		<view-id value="/gestao/contas/cadastros/senha.xhtml" />
+	</url-mapping>
+	
+	<url-mapping id="cadBanco">
+		<pattern value="/cad_banco/" />
+		<view-id value="/gestao/contas/cadastros/banco.xhtml" />
+	</url-mapping>
+	
+	<url-mapping id="cadBandeiraCartao">
+		<pattern value="/cad_bandeira/" />
+		<view-id value="/adm/bandeiraCartao.xhtml" />
+	</url-mapping>
+	
+	<url-mapping id="cadBaixaPagamento">
+		<pattern value="/registrar_pagamento/" />
+		<view-id value="/gestao/contas/cadastros/baixaPagamento.xhtml" />
+		
+	</url-mapping>
+	
+	<url-mapping id="cadBaixaRecebimento">
+		<pattern value="/registrar_recebimento/" />
+		<view-id value="/gestao/contas/cadastros/baixaRecebimento.xhtml" />
+	</url-mapping>
+	
+	<url-mapping id="cadCartaoCredito">
+		<pattern value="/cad_cartao/" />
+		<view-id value="/gestao/contas/cadastros/cartaoCredito.xhtml" />
+	</url-mapping>
+	
+	<url-mapping id="cadCategoria">
+		<pattern value="/cad_categoria/" />
+		<view-id value="/gestao/contas/cadastros/categoria.xhtml" />
+	</url-mapping>
+	
+	<url-mapping id="cadCliente">
+		<pattern value="/cad_cliente/" />
+		<view-id value="/gestao/vendas/cadastros/cliente.xhtml" />
+	</url-mapping>
+	
+	<url-mapping id="cadCheque">
+		<pattern value="/cad_cheque/" />
+		<view-id value="/gestao/contas/cadastros/cheque.xhtml" />
+	</url-mapping>
+	
+	<url-mapping id="cadContaPagar">
+		<pattern value="/conta_pagar/" />
+		<view-id value="/gestao/contas/cadastros/contaPagar.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="cadContaReceber">
+		<pattern value="/conta_receber/" />
+		<view-id value="/gestao/contas/cadastros/contaReceber.xhtml" />
+	</url-mapping>
+	
+	<url-mapping id="cadDevedor">
+		<pattern value="/cad_devedor/" />
+		<view-id value="/gestao/contas/cadastros/devedor.xhtml" />
+	</url-mapping>
+		
+	<url-mapping id="cadDespesasMensais">
+		<pattern value="/cad_despesas/" />
+		<view-id value="/gestao/contas/cadastros/despesaMensal.xhtml" />
+	</url-mapping>
+	
+	<url-mapping id="cadEstoque">
+		<pattern value="/estoque/" />
+		<view-id value="/gestao/vendas/cadastros/estoque.xhtml" />
+	</url-mapping>
+	
+	<url-mapping id="cadFornecedor">
+		<pattern value="/fornecedor/" />
+		<view-id value="/gestao/vendas/cadastros/fornecedor.xhtml" />
+	</url-mapping>
+	
+	<url-mapping id="cadTipoRecebimento">
+		<pattern value="/cad_tipo_recebimento/" />
+		<view-id value="/gestao/vendas/cadastros/tipoRecebimento.xhtml" />
+	</url-mapping>
+	
+	<url-mapping id="cadFuncionario">
+		<pattern value="/cad_funcionario/" />
+		<view-id value="/gestao/vendas/cadastros/funcionario.xhtml" />
+	</url-mapping>
+	
+	<url-mapping id="cadEmissaoCheque">
+		<pattern value="/cad_emissao_cheque/" />
+		<view-id value="/gestao/contas/cadastros/emissaoCheque.xhtml" />
+	</url-mapping>
+	
+	<url-mapping id="cadMovimento">
+		<pattern value="/cad_movimento/" />
+		<view-id value="/gestao/contas/cadastros/movimento.xhtml" />
+	</url-mapping>
+	
+	<url-mapping id="cadProduto">
+		<pattern value="/produto/" />
+		<view-id value="/gestao/vendas/cadastros/produto.xhtml" />
+	</url-mapping>
+	
+	<url-mapping id="cadlancamentoProduto">
+		<pattern value="/lancamento_produto/" />
+		<view-id value="/gestao/vendas/cadastros/lancamentoProduto.xhtml" />
+	</url-mapping>
+	
+	<url-mapping id="cadOrcamento">
+		<pattern value="/orcamento/" />
+		<view-id value="/gestao/vendas/cadastros/orcamento.xhtml" />
+	</url-mapping>
+	
+	<url-mapping id="cadUsuario">
+		<pattern value="/cad_usuario/" />
+		<view-id value="/adm/usuario.xhtml" />
+	</url-mapping>
+	
+	<url-mapping id="cadRecebimento">
+		<pattern value="/cad_recebimento/" />
+		<view-id value="/gestao/contas/cadastros/recebimento.xhtml" />
+	</url-mapping>
+	
+	<url-mapping id="caixa">
+		<pattern value="/caixa/" />
+		<view-id value="/gestao/vendas/cadastros/caixa.xhtml" />
+	</url-mapping>
+	
+	<url-mapping id="caixaMovimento">
+		<pattern value="/caixa_movimento/" />
+		<view-id value="/gestao/vendas/cadastros/caixaMovimento.xhtml" />
+	</url-mapping>
+	
+	<url-mapping id="cancelarPagamento">
+		<pattern value="/cancelar_pagamento/" />
+		<view-id value="/gestao/contas/cadastros/cancelarPagamento.xhtml" />
+	</url-mapping>
+	
+	<url-mapping id="cancelarRecebimento">
+		<pattern value="/cancelar_recebimento/" />
+		<view-id value="/gestao/contas/cadastros/cancelarRecebimento.xhtml" />
+	</url-mapping>
+	
+	<url-mapping id="dadosUsuario">
+		<pattern value="/usuario/" />
+		<view-id value="/gestao/contas/cadastros/dadosUsuario.xhtml" />
+	</url-mapping>
+	
+	<url-mapping id="erro">
+		<pattern value="/erro/" />
+		<view-id value="/erro.xhtml" />
+	</url-mapping>
+	
+	<url-mapping id="erro404">
+		<pattern value="/erro404/" />
+		<view-id value="/erro404.xhtml" />
+	</url-mapping>
+	
+	<url-mapping id="home">
+		<pattern value="/home/" />
+		<view-id value="/sis/home.xhtml" />
+	</url-mapping>
+	
+	<url-mapping id="logErro">
+		<pattern value="/adm/log_erro/" />
+		<view-id value="/adm/log_erro.xhtml" />
+	</url-mapping>
+	
+	<url-mapping id="login">
+		<pattern value="/" />
+		<view-id value="/login.xhtml" />
+	</url-mapping>
+	
+	<url-mapping id="novoUsuario">
+		<pattern value="/novo_usuario/" />
+		<view-id value="/gestao/controle/novoUsuario.xhtml" />
+	</url-mapping>
+	
+	<url-mapping id="pagVenda">
+		<pattern value="/pagamento/#{pagamentoOrcamentoBean.venda.orcamento.id}" />
+		<view-id value="/gestao/vendas/cadastros/pagamentoVenda.xhtml" />
+		<action onPostback="false">#{pagamentoOrcamentoBean.carregarOrcamento}</action>
+	</url-mapping>
+	
+	<url-mapping id="pesqChequeEmitido">
+		<pattern value="/pesq_cheque/" />
+		<view-id value="/gestao/contas/pesquisas/chequesEmitidos.xhtml" />
+	</url-mapping>
+	
+	<url-mapping id="pesqContaPagar">
+		<pattern value="/pesq_contas/" />
+		<view-id value="/gestao/contas/pesquisas/contasPagar.xhtml" />
+	</url-mapping>
+	
+	<url-mapping id="pesqContaReceber">
+		<pattern value="/pesq_recebimentos/" />
+		<view-id value="/gestao/contas/pesquisas/contasReceber.xhtml" />
+	</url-mapping>
+	
+	<url-mapping id="pesqFechamentoCaixa">
+		<pattern value="/pesq_fechamentos/" />
+		<view-id value="/gestao/vendas/pesquisas/fechamentoCaixa.xhtml" />
+	</url-mapping>
+		
+	<url-mapping id="pesqMovimentoEstoque">
+		<pattern value="/movimento_estoque/" />
+		<view-id value="/gestao/vendas/pesquisas/movimentoEstoque.xhtml" />
+	</url-mapping>
+	
+	<url-mapping id="pesqHistoricoValor">
+		<pattern value="/historico_valor/" />
+		<view-id value="/gestao/vendas/pesquisas/historicoValor.xhtml" />
+	</url-mapping>
+	
+	<url-mapping id="pesqMovimentos">
+		<pattern value="/pesq_movimento/" />
+		<view-id value="/gestao/contas/pesquisas/movimentacao.xhtml" />
+	</url-mapping>
+	
+	<url-mapping id="pesqPagamentos">
+		<pattern value="/pesq_pagamentos/" />
+		<view-id value="/gestao/contas/pesquisas/pagamentosRealizados.xhtml" />
+	</url-mapping>
+		
+	<url-mapping id="pesqRecebimentos">
+		<pattern value="/pesq_recebimentos_realizados/" />
+		<view-id value="/gestao/contas/pesquisas/recebimentosRealizados.xhtml" />
+	</url-mapping>
+	
+	<url-mapping id="pesqVendas">
+		<pattern value="/pesq_vendas/" />
+		<view-id value="/gestao/vendas/pesquisas/vendas.xhtml" />
+	</url-mapping>
+	
+	<url-mapping id="recriarSenha">
+		<pattern value="/recriar_senha/#{recriarSenhaBean.descricao}/#{recriarSenhaBean.senhaAtual}" />
+		<view-id value="/controle/recriarSenha.xhtml" />
+		<action>#{recriarSenhaBean.carregarUsuarioRecadastrarSenha}</action>
+	</url-mapping>
+	
+	<url-mapping id="recuperarSenha">
+		<pattern value="/recuperar_senha/" />
+		<view-id value="/gestao/controle/recuperarSenha.xhtml" />
+	</url-mapping>
+	
+	<url-mapping id="tema">
+		<pattern value="/tema/" />
+		<view-id value="/sis/tema.xhtml" />
+	</url-mapping>
+	
+	<url-mapping id="venda">
+		<pattern value="/venda/" />
+		<view-id value="/gestao/vendas/cadastros/venda.xhtml" />
+	</url-mapping>
+	
+</pretty-config>

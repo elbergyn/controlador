@@ -1,0 +1,170 @@
+<ui:composition template="/WEB-INF/template/LayoutPadrao.html"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+	<ui:define name="title">Registrar pagamento</ui:define>
+
+	<ui:define name="corpo">
+	
+		<p:panel id="filter" header="Filtrar">
+			<p:panelGrid columns="4" layout="grid" columnClasses="rotulo, campo, rotulo, campo" styleClass="gridSimples">
+				<p:outputLabel for="mes" value="Vencimento "/>			
+				<p:column>
+					<p:selectOneMenu id="mes" style="width: 120px" value="#{baixaPagamentoBean.filtro.mes}"
+						styleClass="ui-selectonemenu-normal">
+						<f:selectItem itemLabel="Mês" itemValue=""/>
+						<f:selectItems value="#{baixaPagamentoBean.meses}" />
+					</p:selectOneMenu>
+					<p:selectOneMenu id="ano" style="width: 70px" value="#{baixaPagamentoBean.filtro.ano}">
+						<f:selectItem itemLabel="Ano" itemValue=""/>
+						<f:selectItems value="#{baixaPagamentoBean.anos}" />
+					</p:selectOneMenu>
+				</p:column>
+				
+				<p:outputLabel for="categoria" value="Categoria: " />
+				<p:selectOneMenu id="categoria" style="width: 120px" value="#{baixaPagamentoBean.filtro.categoria}" 
+						styleClass="ui-selectonemenu-normal" >
+						<f:selectItem itemLabel="Selecione" itemValue=""/>
+						<f:selectItems value="#{baixaPagamentoBean.categorias}" var="categoria" itemLabel="#{categoria.descricao}"
+							itemValue="#{cheque}"/>
+					</p:selectOneMenu>
+				
+				<p:column visible="!#{baixaPagamentoBean.mostrarCartao()}" >
+					<p:outputLabel for="cartao" value="Cartão" style="padding-left: 20px !important"/>
+				</p:column>
+				<p:column visible="!#{baixaPagamentoBean.mostrarCartao()}">			
+					<p:selectOneMenu id="cartao" style="width: 120px" value="#{baixaPagamentoBean.filtro.cartao}" 
+						styleClass="ui-selectonemenu-normal">
+						<f:selectItem itemLabel="Selecione" itemValue=""/>
+						<f:selectItems value="#{baixaPagamentoBean.cartoes}" var="cartao" itemLabel="#{cartao.descricao}"
+							itemValue="#{cartao}"/>
+					</p:selectOneMenu>
+				</p:column>
+				
+				<p:column visible="!#{baixaPagamentoBean.mostrarCheque()}">
+					<p:outputLabel for="cheque" value="Cheque"/>
+				</p:column>
+				<p:column visible="!#{baixaPagamentoBean.mostrarCheque()}">			
+					<p:selectOneMenu id="cheque" style="width: 120px" value="#{baixaPagamentoBean.filtro.cheque}" 
+						styleClass="ui-selectonemenu-normal" >
+						<f:selectItem itemLabel="Selecione" itemValue=""/>
+						<f:selectItems value="#{baixaPagamentoBean.cheques}" var="cheque" itemLabel="#{cheque.descricao}"
+							itemValue="#{cheque}"/>
+					</p:selectOneMenu>
+				</p:column>
+				
+			</p:panelGrid>
+			<p:commandButton value="Filtrar" icon="icon-filter" action="#{baixaPagamentoBean.filtrar}" update="table"/>
+			<p:commandButton value="Limpar" icon="icon-empty" action="#{baixaPagamentoBean.limpar}" update="table, filter"/>
+		</p:panel>
+
+		<p:panel styleClass="sem-fundo">
+			<p:dataTable id="table" var="item" value="#{baixaPagamentoBean.baixas}"
+				editable="true" editMode="cell" reflow="true"
+				style="margin-top: 5px; width: 99,5%"
+				emptyMessage="Nenhuma conta a pagar em aberto" rows="10"
+				paginator="true" rowsPerPageTemplate="10 20 30 50 100"
+				paginatorAlwaysVisible="false" paginatorPosition="top"
+				rowKey="#{item.debito.id}" 
+				selection="#{baixaPagamentoBean.realizarBaixas}"
+				rowStyleClass="#{baixaPagamentoBean.styleAtraso(item)}" 
+				resizableColumns="true">
+				
+				<p:ajax event="cellEdit" listener="#{baixaPagamentoBean.onCellEdit}"/>
+				
+				<p:column selectionMode="multiple" style="width:16px;text-align:center" />
+				<p:ajax event="toggleSelect" listener="#{baixaPagamentoBean.rowToggleSelect}" update="btnPag"/>
+				
+				<p:ajax event="rowSelectCheckbox" listener="#{baixaPagamentoBean.checked}" update="btnPag" />
+				<p:ajax event="rowUnselectCheckbox" listener="#{baixaPagamentoBean.unChecked}" update="btnPag"/>
+				
+				<p:ajax event="rowSelect" listener="#{baixaPagamentoBean.checked}" update="btnPag" />				
+
+				<f:facet name="header">
+					Contas a pagar em aberto
+				</f:facet>
+
+				<p:column headerText="Descrição" sortBy="#{item.debito.descricao}">
+					<h:outputText value="#{item.debito.descricao}" />
+				</p:column>
+
+				<p:column headerText="Situação"
+					style="width: 120px; text-align: center"
+					sortBy="#{item.debito.situacao.descricao}">
+					<h:outputText value="#{item.debito.situacao.descricao}" />
+				</p:column>
+				
+				<p:column headerText="Categoria" style="text-align: center; width: 120px"
+					sortBy="#{item.debito.categoria.descricao}">
+					<h:outputText value="#{item.debito.categoria.descricao}" />
+				</p:column>
+				
+				<p:column headerText="Parcela" style="width: 70px; text-align: center">
+					<h:outputText value="#{item.debito.parcela}/#{item.debito.parcelaTotal}" />
+				</p:column>
+
+				<p:column headerText="Vencimento"
+					style="width: 120px; text-align: center"
+					sortBy="#{item.debito.vencimento}">
+					<h:outputText value="#{item.debito.vencimento}">
+						<f:convertDateTime pattern="dd/MM/yyyy" />
+					</h:outputText>
+				</p:column>
+				
+				<p:column headerText="Valor total" style="width: 120px"
+					sortBy="#{item.valor}">
+					<h:outputText value="#{item.debito.valor}">
+						<f:convertNumber type="currency" />
+					</h:outputText>
+				</p:column>
+				
+				<p:column headerText="Valor a Pagar" style="width: 120px">
+					<p:cellEditor>
+						<f:facet name="output">
+							<h:outputText value="#{item.valor}" title="Clique no valor para alterá-lo">
+								<f:convertNumber type="currency" />
+							</h:outputText>
+						</f:facet>
+						<f:facet name="input">
+							<p:inputText value="#{item.valor}" style="width:96%"
+								styleClass="moeda" onfocus="configurarMoeda();" 
+								converter="moedaConverter" />
+						</f:facet>
+					</p:cellEditor>
+				</p:column>
+				
+				<p:columnGroup type="footer">
+					<p:row>
+						<p:column colspan="6" style="text-align:right"
+							footerText="Total: "/>
+							
+						<p:column footerText="#{baixaPagamentoBean.valorTotal}"/>
+						
+						<p:column footerText="#{baixaPagamentoBean.valorPagar}"/>
+					</p:row>
+				</p:columnGroup>
+				
+				<f:facet name="footer">
+					<p:commandButton icon="icon-money" value="Realizar pagamento" id="btnPag"
+						oncomplete="PF('confirmacaoPagamento').show()"
+						partialSubmit="true" process=":form:table" disabled="#{baixaPagamentoBean.permitirPagamento}"/>
+				</f:facet>
+			</p:dataTable>
+		</p:panel>
+
+		<p:confirmDialog header="Realizar pagamento"
+			message="Confirma os pagamentos selecionados?"
+			widgetVar="confirmacaoPagamento" showEffect="fade" hideEffect="fade">
+			<p:commandButton value="Sim"
+				oncomplete="PF('confirmacaoPagamento').hide();"
+				icon="icon-button-ok"
+				actionListener="#{baixaPagamentoBean.salvar()}" update=":form:table, :form:filter" />
+			<p:button value="Não"
+				onclick="PF('confirmacaoPagamento').hide(); return false;"
+				icon="icon-button-no" />
+		</p:confirmDialog>
+	</ui:define>
+</ui:composition>

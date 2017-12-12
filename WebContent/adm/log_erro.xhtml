@@ -1,0 +1,82 @@
+<ui:composition template="/WEB-INF/template/LayoutPadrao.html"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+	<ui:define name="title">Cadastro Usuário</ui:define>
+	<ui:param name="bean" value="#{cadastroUsuarioBean}" />
+
+	<ui:define name="corpo">
+		<p:panel header="Limpar log" id="panelCadastro">
+			<h:panelGrid columns="3" style="padding-bottom: 5px">
+				<p:commandButton icon="icon-search" value="Pesquisar" action="#{logSisErroBean.pesquisar()}" update="panelItens" />
+				<p:commandButton icon="icon-empty" value="Limpar" action="#{logSisErroBean.limpar()}" update="panelCadastro,panelItens" />
+				<p:commandButton icon="icon-delete" value="Excluir" action="#{logSisErroBean.excluir()}" update="panelItens @this" 
+					partialSubmit="true" process="panelCadastro" id="btnExcluir" disabled="#{logSisErroBean.habilitarExcluir()}"/>
+			</h:panelGrid>
+			<p:panelGrid columns="2" columnClasses="rotulo, campo" layout="grid"
+				styleClass="gridSimples">
+				<p:outputLabel for="de" value="Início: " />
+				<p:calendar value="#{logSisErroBean.filtro.dataIni}" id="de"
+					pattern="dd/MM/yyyy" locale="pt_BR" effect="fade" />
+
+				<p:outputLabel for="para" value="Fim: " />
+				<p:calendar value="#{logSisErroBean.filtro.dataFim}" id="para"
+					pattern="dd/MM/yyyy" locale="pt_BR" effect="fade" />
+			</p:panelGrid>
+		</p:panel>
+		<p:panel id="panelItens">
+			<p:dataTable id="table" value="#{logSisErroBean.logs}" var="item"
+				style="margin-top: 5px; width: 99,5%"
+				emptyMessage="Nenhum item encontrado" rows="10" paginator="true"
+				rowsPerPageTemplate="10 20 30 50 100" paginatorAlwaysVisible="false"
+				paginatorPosition="top" reflow="true" resizableColumns="true"
+				rowKey="#{item.id}"
+				selection="#{logSisErroBean.logsSelect}">
+
+				<f:facet name="header">
+					Contas a pagar cadastradas
+				</f:facet>
+				
+				<p:column style="width: 15px;">
+					<p:rowToggler />
+				</p:column>
+				<p:ajax event="toggleSelect" process="table" partialSubmit="true" update="btnExcluir"/>
+				<p:ajax event="rowSelectCheckbox" process="table" partialSubmit="true" update="btnExcluir"/>
+				<p:ajax event="rowUnselectCheckbox" process="table" partialSubmit="true" update="btnExcluir"/>
+				
+				<p:column selectionMode="multiple"
+					style="width:16px;text-align:center" />
+				
+				<p:rowExpansion>
+						<p:panelGrid style="width: 90%">
+							<p:outputLabel value="#{item.mensagem}" escape="false" />
+						</p:panelGrid>
+				</p:rowExpansion>
+
+				<p:column headerText="Data" style="text-align: center; width: 150px" sortBy="#{item.data}">
+					<h:outputText value="#{item.data}">
+						<f:convertDateTime pattern="dd/MM/yy HH:mm:ss" />
+					</h:outputText>
+				</p:column>
+				<p:column headerText="Usuário" sortBy="#{item.mensagem}">
+					<h:outputText value="#{item.usuarioDesc}" />
+				</p:column>
+			</p:dataTable>
+		</p:panel>
+
+		<p:confirmDialog header="Exclusão de logs"
+			message="Confirma a exclusão dos logs?"
+			widgetVar="confirmacaoExclusao">
+			<p:commandButton value="Sim" action="#{bean.excluir()}"
+				partialSubmit="true" process="@this"
+				oncomplete="PF('confirmacaoExclusao').hide();" icon="icon-button-ok"
+				update="table" />
+			<p:button value="Não"
+				onclick="PF('confirmacaoExclusao').hide(); return false;"
+				icon="icon-button-no" />
+		</p:confirmDialog>
+	</ui:define>
+</ui:composition>

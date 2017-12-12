@@ -1,0 +1,38 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+	<p:panelGrid columns="2">
+		<p:outputLabel value="Número de cheque" for="ncheques" />
+		<p:column>
+			<p:inputText id="ncheques"
+				value="#{cadastroContaReceberBean.numeroCheque}" 
+				required="#{cadastroContaReceberBean.requererNumeroCheque}" 
+				requiredMessage="Informe o número do cheque"
+				onkeyup="validarNumero(this);" size="14"
+				maxlength="8"
+				validator="maiorZeroValidation"/>
+				<!-- validator="maiorZeroValidation" -->
+			<p:commandButton icon="icon-button-add" partialSubmit="true"
+				process="@this, ncheques, parc_total" update="numeros_cheque, ncheques"
+				action="#{cadastroContaReceberBean.addNumeroCheque}"
+				title="Adicionar número de cheque" />
+		</p:column>		
+		
+		<p:outputLabel value="Números adicionados" />
+		<p:dataList value="#{cadastroContaReceberBean.conta.numerosCheque}"
+			styleClass="datalist-sem-borda" var="numero" type="ordered"
+			id="numeros_cheque" emptyMessage="">
+			<p:outputLabel value="#{numero}" />
+
+			<p:commandLink
+				actionListener="#{cadastroContaReceberBean.removeNumeroCheque(numero)}"
+				partialSubmit="true" process="@this" update="numeros_cheque"
+				title="Remover número de cheque">
+				<p:graphicImage name="remove.png" library="images/16" />
+			</p:commandLink>
+		</p:dataList>
+	</p:panelGrid>
+</ui:composition>

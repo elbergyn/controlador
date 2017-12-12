@@ -1,0 +1,70 @@
+<ui:composition template="/WEB-INF/template/LayoutPadrao.html"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+	<ui:define name="title">Vendas realizadas</ui:define>
+	<ui:param name="bean" value="#{pesqVendasBean}" />
+
+	<ui:define name="corpo">
+		<p:panel header="Filtrar históricos" id="panelFiltro">
+
+			<ui:include src="/WEB-INF/template/botoesPesquisa.xhtml" />
+
+			<p:panelGrid columns="2" columnClasses="rotulo, campo">
+
+				<p:outputLabel value="Data inicio" for="movimentoini" />
+				<p:calendar id="movimentoini"
+					value="#{pesqVendasBean.filtro.inicio}" effect="fade"
+					pattern="dd/MM/yyyy HH:mm" locale="pt_BR" showButtonPanel="true"
+					navigator="true" />
+
+				<p:outputLabel value="Data final" for="movimentofim" />
+				<p:calendar id="movimentofim" value="#{pesqVendasBean.filtro.fim}"
+					effect="fade" pattern="dd/MM/yyyy HH:mm" locale="pt_BR"
+					showButtonPanel="true" navigator="true" />
+
+			</p:panelGrid>
+		</p:panel>
+		<p:panel id="panelItens">
+			<p:dataGrid id="table" value="#{pesqVendasBean.vendas}" var="item"
+				style="margin-top: 5px; width: 99%"
+				emptyMessage="Nenhuma venda localizada" 
+				rows="12" columns="4" layout="grid"
+				paginator="true" rowsPerPageTemplate="10 20 30" 
+				paginatorAlwaysVisible="false" paginatorPosition="top">
+
+				<f:facet name="header">
+					Vendas realizadas
+				</f:facet>
+
+				<p:panel header="Cód.: #{item.id}" >
+					<p:panelGrid columns="1" layout="grid" styleClass="sem_borda">
+						<p:column>
+							<h:outputLabel value="Data:" />
+							<h:outputText value="#{item.data}">
+								<f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+							</h:outputText>
+						</p:column>
+
+						<p:column>
+							<h:outputLabel value="Total:" />
+							<h:outputText value="#{item.valorTotal}">
+								<f:convertNumber locale="pt_BR" type="currency" />
+							</h:outputText>
+						</p:column>
+					</p:panelGrid>
+				</p:panel>
+				
+				<f:facet name="footer">
+					<p:outputLabel value="Total: " />
+					<p:outputLabel value="#{pesqVendasBean.total}" />
+				</f:facet>
+			</p:dataGrid>
+		</p:panel>
+
+
+	</ui:define>
+</ui:composition>

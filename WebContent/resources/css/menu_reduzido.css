@@ -1,0 +1,24 @@
+#menu_reduzido{
+	visibility: hidden;
+}
+
+#position{
+	float: right;
+    width: 100%;
+    position: absolute;
+    top: 23px;
+}
+
+.img_menu{
+	margin-right: 1em;
+	cursor: pointer;
+	float: right;
+    position: relative;
+}
+
+@media screen and (max-width: 53.75em) {
+	#menu_reduzido{
+		visibility: visible;
+	}
+}
+

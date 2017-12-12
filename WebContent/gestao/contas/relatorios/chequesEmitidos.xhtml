@@ -1,0 +1,137 @@
+<ui:composition template="/WEB-INF/template/LayoutPadrao.html"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+	<ui:define name="title">Pesquisa de cheques emitidos</ui:define>
+	
+	<ui:define name="corpo">
+		<ui:param name="bean" value="#{pesqChequeEmitidoBean}" />
+		
+		<p:panel header="Filtro para cheques emitidos" id="panelFiltro">
+			<ui:include src="/WEB-INF/template/botoesPesquisa.xhtml" />
+			
+			<p:panelGrid columns="4" columnClasses="rotulo, campo">
+				<p:outputLabel for="cheque" value="Cheque"/>
+				<p:selectOneMenu id="cheque" required="true" requiredMessage="Informe o cheque"
+					value="#{pesqChequeEmitidoBean.cheque}"
+					>
+					<f:selectItem itemLabel="Selecione o cheque" />
+					<f:selectItems value="#{pesqChequeEmitidoBean.cheques}" var="item" 
+						itemLabel="#{item.descricao}" itemValue="#{item}" />
+				</p:selectOneMenu>
+				
+				<p:outputLabel value="Data emissão inicio" for="emissaoini" />
+				<p:calendar id="emissaoini" required="true" requiredMessage="Informe a data de emissão do cheque" 
+					value="#{pesqChequeEmitidoBean.dataEmissaoIni}"
+					effect="fade" 
+					maxdate="#{cadastroEmissaoChequeBean.dataAtual}"
+					pattern="dd/MM/yyyy"
+					locale="pt_BR"
+					showButtonPanel="true"
+					navigator="true"/>
+					
+				<p:outputLabel value="Data emissão final" for="emissaofim" />
+				<p:calendar id="emissaofim" required="true" requiredMessage="Informe a data de emissão do cheque" 
+					value="#{pesqChequeEmitidoBean.dataEmissaoFim}"
+					effect="fade" 
+					maxdate="#{cadastroEmissaoChequeBean.dataAtual}"
+					pattern="dd/MM/yyyy"
+					locale="pt_BR"
+					showButtonPanel="true"
+					navigator="true"/>
+				
+				<p:outputLabel value="Número" for="numeroini" />				 
+				<p:inputText id="numeroini" required="true" requiredMessage="Informe o número do cheque"
+					value="#{pesqChequeEmitidoBean.numeroIni}" onkeyup="validarNumero(this);"/>
+				
+				<p:outputLabel value="Número" for="numerofim" />				 
+				<p:inputText id="numerofim" required="true" requiredMessage="Informe o número do cheque"
+					value="#{pesqChequeEmitidoBean.numeroIni}" onkeyup="validarNumero(this);"/>
+				
+				<p:outputLabel value="Data vencimento" for="vencimentoini" />
+				<p:calendar id="vencimentoini" required="true" requiredMessage="Informe a data de vencimento" 
+					value="#{pesqChequeEmitidoBean.dataVencimentoIni}"
+					effect="fade"
+					pattern="dd/MM/yyyy"
+					locale="pt_BR"
+					showButtonPanel="true"
+					navigator="true"/>
+					
+				<p:outputLabel value="Data vencimento" for="vencimentofim" />
+				<p:calendar id="vencimentofim" required="true" requiredMessage="Informe a data de vencimento" 
+					value="#{pesqChequeEmitidoBean.dataVencimentoFim}"
+					effect="fade"
+					pattern="dd/MM/yyyy"
+					locale="pt_BR"
+					showButtonPanel="true"
+					navigator="true"/>
+					
+				<p:outputLabel value="Descrição" for="descricao" />
+				<p:inputText id="descricao" size="50" maxlength="50"  required="true"
+					requiredMessage="Informe a descrição"
+					value=""/>
+					
+				<p:outputLabel value="Valor" for="valorini" />
+				<p:inputText id="valorini" styleClass="moeda" onfocus="configurarMoeda();" required="true"
+					requiredMessage="Informe o valor" converter="moedaConverter"
+					value="#{pesqChequeEmitidoBean.valorIni}"/>
+					
+				<p:outputLabel value="Valor" for="valorfim" />
+				<p:inputText id="valorfim" styleClass="moeda" onfocus="configurarMoeda();" required="true"
+					requiredMessage="Informe o valor" converter="moedaConverter"
+					value="#{pesqChequeEmitidoBean.valorFim}"/>
+
+			</p:panelGrid>
+		</p:panel>
+		
+		<p:panel styleClass="sem-fundo">
+			<p:dataTable id="table" value="#{pesqChequeEmitidoBean.chequesEmitidos}" var="item"
+				style="margin-top: 5px; width: 99,5%" emptyMessage="Nenhum cheque emitido" rows="10" paginator="true"
+				rowsPerPageTemplate="10 20 30" paginatorAlwaysVisible="false" paginatorPosition="top" reflow="true"
+				resizableColumns="true">
+							
+				<f:facet name="header">
+					Cheques Emitidos
+				</f:facet>
+				
+				<p:column headerText="Descrição">
+					<h:outputText value="#{item.descricao}" />
+				</p:column>
+				<p:column headerText="Cheque">
+					<h:outputText value="#{item.cheque.descricao}" />
+				</p:column>
+				<p:column headerText="Vencimento" style="text-align: center; width: 80px">
+					<h:outputText value="#{item.dataVencimento}">
+						<f:convertDateTime pattern="dd/MM/yyyy" />
+					</h:outputText>
+				</p:column>
+				<p:column headerText="Valor Total" style="text-align: center; width: 120px">
+					<h:outputText value="#{item.valor}">
+						<f:convertNumber type="currency" />
+					</h:outputText>
+				</p:column>
+				
+				<p:column style="text-align: center; width: 90px;">
+					<p:commandButton icon="icon-edit" title="Editar" process="@this" partialSubmit="true"
+						update="panelFiltro">
+						<f:setPropertyActionListener target="#{bean.cheque}" value="#{item}"/>
+					</p:commandButton>
+					<p:commandButton icon="icon-delete" title="Excluir" process="@this"  
+						partialSubmit="true" oncomplete="PF('confirmacaoExclusao').show()" >
+						<f:setPropertyActionListener target="#{bean.cheque}" value="#{item}"/>	
+					</p:commandButton>
+				</p:column>
+			</p:dataTable>
+		</p:panel>
+		
+		<p:confirmDialog header="Exclusão de emissão de cheque" message="Tem certeza que deseja excluir o emissão de cheque?"
+	    		widgetVar="confirmacaoExclusao" >
+	    	<p:commandButton value="Sim" action="#{bean.excluir()}" partialSubmit="true" process="@this" 
+	    		oncomplete="PF('confirmacaoExclusao').hide();" icon="icon-button-ok" update="table"/>
+	    	<p:button value="Não" onclick="PF('confirmacaoExclusao').hide(); return false;" icon="icon-button-no"/>
+	    </p:confirmDialog>
+	</ui:define>
+</ui:composition>

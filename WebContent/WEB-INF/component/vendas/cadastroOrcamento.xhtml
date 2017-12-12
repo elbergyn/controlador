@@ -1,0 +1,201 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+	<p:panelGrid columns="2" layout="grid" styleClass="ui-font-size-1">
+		<p:column>
+			<p:panel style="font-size: 14px !important, padding-right: 10px">
+				<p:commandButton value="Salvar" icon="icon-save"
+					action="#{bean.salvar()}" update="panelCod cadastro messageSimple" />
+				<p:commandButton value="Novo" icon="icon-new"
+					action="#{bean.novo()}" immediate="true" process="@this"
+					partialSubmit="true" update="panelCod cadastro tableItens totais itens" />
+				<p:commandButton icon="icon-money" value="Pagamento" 
+					actionListener="#{cadastroOrcamentoBean.pagamento()}"
+					title="Realizar pagamento"/>
+			</p:panel>
+			
+			<p:focus for="codigo" />		
+
+			<p:panelGrid columns="4" layout="grid" id="panelCod" 
+				styleClass="ui-fluid" columnClasses="rotulo, campo">
+				<p:outputLabel value="Data: " />
+				<p:inputText id="data" disabled="true"
+					value="#{cadastroOrcamentoBean.orcamento.data}">
+					<f:convertDateTime locale="pt_BR" />
+				</p:inputText>
+
+				<p:outputLabel for="codigo" value="Cód: " />
+				<p:inputText id="codigo" title="Informe o código para pesquisar"
+					value="#{cadastroOrcamentoBean.orcamento.id}"
+					onkeyup="validarNumero(this)" style="background-color: #F7E9C1">
+					<p:ajax partialSubmit="true" process="@this"
+						listener="#{cadastroOrcamentoBean.carregarOrcamento()}"
+						update="panelCod cadastro tableItens totais" />
+				</p:inputText>
+			</p:panelGrid>
+
+			<p:panelGrid columns="4" id="cadastro" layout="grid" 
+				styleClass="ui-fluid" columnClasses="rotulo, campo">
+
+				<p:outputLabel for="cliente" value="Cliente: " />
+				<p:autoComplete id="cliente"
+					value="#{cadastroOrcamentoBean.orcamento.cliente}" dropdown="true"
+					completeMethod="#{cadastroOrcamentoBean.clientes}" var="item"
+					itemLabel="#{item.nome}" itemValue="#{item}" size="25"
+					styleClass="ui-autocomplete-alt" />
+
+				<p:outputLabel for="funcionario" value="Funcionário: " />
+				<p:autoComplete id="funcionario"
+					value="#{cadastroOrcamentoBean.orcamento.funcionario}"
+					dropdown="true"
+					completeMethod="#{cadastroOrcamentoBean.funcionarios}" var="item"
+					itemLabel="#{item.nome}" itemValue="#{item}" size="25"
+					styleClass="ui-autocomplete-alt" required="true"
+					requiredMessage="Informe o funciónario" />
+
+				<p:outputLabel for="txServico" value="Taxa de serviço: " />
+				<p:selectBooleanButton id="txServico" offLabel="Não"
+					onLabel="Cobrar"
+					value="#{cadastroOrcamentoBean.orcamento.cobrarTaxaServico}">
+					<p:ajax process="@this" partialSubmit="true" update="totais txP"
+						listener="#{cadastroOrcamentoBean.calcularValorTaxa()}" />
+				</p:selectBooleanButton>
+
+				<p:outputLabel value="Taxa %: " for="txP" />
+				<p:inputText id="txP"
+					value="#{cadastroOrcamentoBean.orcamento.percentualTaxaServico}"
+					onfocus="configurarDecimal(this);" converter="decimalConverter"
+					disabled="#{cadastroOrcamentoBean.habilitarTaxa}">
+					<p:ajax event="blur" process="@this"
+						listener="#{cadastroOrcamentoBean.calcularValorTaxa()}"
+						update="totais" />
+				</p:inputText>
+
+				<p:outputLabel value="Observação: " for="obs" />
+				<p:inputTextarea id="obs" cols="30" rows="2" scrollHeight="2"
+					autoResize="false" />
+
+				<p:column />
+				<p:column />
+			</p:panelGrid>
+
+
+			<!--_____________________________________________________________________-->
+			<p:panel header="Adicionar item ao pedido"
+				styleClass="remover_borda_padding">
+				<p:panelGrid columns="2" layout="grid"
+					columnClasses="rotulo, campo, rotulo, campo" id="itens">
+					<p:outputLabel value="Produto: " for="prod" />
+					<p:autoComplete id="prod" effect="fade" scrollHeight="200"
+						value="#{cadastroOrcamentoBean.itemVenda.produto}" dropdown="true"
+						completeMethod="#{cadastroOrcamentoBean.produtos}" var="item"
+						itemLabel="#{item.descricao}" itemValue="#{item}" size="30" />
+
+					<p:outputLabel value="Qtde.: " for="qtde" />
+					<p:column>
+						<p:spinner id="qtde"
+							value="#{cadastroOrcamentoBean.itemVenda.qtde}" min="1"
+							onkeyup="validarNumero(this);" />
+						<p:commandButton icon="icon-button-add" style="left: 5px;"
+							title="Adicionar produto" partialSubmit="true" process="itens"
+							actionListener="#{cadastroOrcamentoBean.adicionarItem()}"
+							update="tableItens itens totais">
+						</p:commandButton>
+					</p:column>
+
+				</p:panelGrid>
+			</p:panel>
+		</p:column>
+		<p:column>
+			<p:dataTable id="tableItens" var="item"
+				value="#{cadastroOrcamentoBean.orcamento.itensVenda}"
+				style="margin-top: 5px; width: 99%; "
+				emptyMessage="Nenhum produto adicionado"
+				paginatorAlwaysVisible="false" rowKey="#{item.id}" scrollable="true"
+				scrollHeight="360" resizableColumns="true">
+
+				<f:facet name="header">
+					Itens do orçamento
+				</f:facet>
+
+				<p:column headerText="Cód." style="width: 60px">
+					<h:outputLabel value="#{item.produto.id}" />
+				</p:column>
+
+				<p:column headerText="Produto">
+					<h:outputLabel value="#{item.produto.descricao}" />
+				</p:column>
+
+				<p:column headerText="Valor Unit." style="width: 100px">
+					<h:outputLabel value="#{item.valorUnitario}">
+						<f:convertNumber type="currency" />
+					</h:outputLabel>
+				</p:column>
+
+				<p:column headerText="Qtde" style="width: 30px">
+					<h:outputLabel value="#{item.qtde}" />
+				</p:column>
+
+				<p:column headerText="Valor Total" style="width: 100px">
+					<h:outputLabel value="#{item.valorTotal}">
+						<f:convertNumber type="currency" />
+					</h:outputLabel>
+				</p:column>
+
+				<p:column style="width: 32px">
+					<p:commandButton icon="icon-button-remove" title="Subtrair item"
+						process="@this" partialSubmit="true"
+						oncomplete="PF('subtrairItem').show()">
+						<f:setPropertyActionListener target="#{bean.itemVenda}"
+							value="#{item}" />
+					</p:commandButton>
+				</p:column>
+			</p:dataTable>
+
+			<p:confirmDialog header="Subtrair item"
+				message="Tem certeza que deseja subtrair o item?"
+				widgetVar="subtrairItem">
+				<p:commandButton value="Sim" action="#{bean.removeItem()}"
+					partialSubmit="true" process="@this"
+					oncomplete="PF('subtrairItem').hide();" icon="icon-button-ok"
+					update="tableItens totais" />
+				<p:button value="Não"
+					onclick="PF('subtrairItem').hide(); return false;"
+					icon="icon-button-no" />
+			</p:confirmDialog>
+		</p:column>
+	</p:panelGrid>
+	<!--_____________________________________________________________________-->
+		<p:panelGrid columns="3" id="totais" layout="grid" styleClass="totaisOrcamento">
+			<p:column>
+				<p:outputLabel value="Taxa de serviço: " for="valorTaxa" />
+				<p:inputText id="valorTaxa" readonly="true"
+					style="background-color: grey"
+					value="#{cadastroOrcamentoBean.orcamento.valorTaxaSevico}">
+					<f:convertNumber type="currency" />
+				</p:inputText>
+			</p:column>
+
+			<p:column>
+				<p:outputLabel value="Valor Pedido: " for="tPedidos" />
+				<p:inputText id="tPedidos" readonly="true"
+					style="background-color: grey"
+					value="#{cadastroOrcamentoBean.orcamento.valorItens}">
+					<f:convertNumber type="currency" />
+				</p:inputText>
+			</p:column>
+
+			<p:column>
+				<p:outputLabel value="Valor Total: " for="vTotal" />
+				<p:inputText id="vTotal" readonly="true" 
+					style="background-color: grey"
+					value="#{cadastroOrcamentoBean.orcamento.valorTotal}">
+					<f:convertNumber type="currency" />
+				</p:inputText>
+			</p:column>
+		</p:panelGrid>
+
+</ui:composition>
